@@ -954,6 +954,7 @@ export default function BookingPage() {
 
                   <Button
                     type="submit"
+                    onClick={handleSubmit}
                     className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-medium py-3"
                     size="lg"
                     disabled={isLoading}
