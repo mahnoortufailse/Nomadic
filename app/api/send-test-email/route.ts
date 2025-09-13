@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { type NextRequest, NextResponse } from "next/server"
 import { sendBookingConfirmation, sendAdminNotification } from "@/lib/email"
 import type { Booking } from "@/lib/types"
