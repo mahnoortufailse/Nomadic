@@ -9,7 +9,7 @@ import Image from "next/image";
 
 export default function BookingFailedPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FBF9D9] via-[#E6CFA9] to-[#D3B88C]">
+    <div className="min-h-screen bg-white">
       {/* Navigation */}
       <nav className="bg-[#3C2317]/90 backdrop-blur-md border-b border-[#3C2317]/50 shadow-lg sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
