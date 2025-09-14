@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Save, ArrowLeft, SettingsIcon, DollarSign, Tent, Plus, Trash2, AlertCircle } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { toast } from "react-hot-toast"
 import type { Settings } from "@/lib/types"
 
@@ -157,10 +158,7 @@ export default function AdminSettingsPage() {
             </div>
 
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-xl flex items-center justify-center shadow-lg">
-                <Tent className="w-5 h-5 text-[#FBF9D9]" />
-              </div>
-              <span className="text-lg font-bold text-[#3C2317]">NOMADIC</span>
+              <Image src="/logo.png" alt="NOMADIC" width={120} height={40} className="h-8 w-auto" />
             </div>
           </div>
 
