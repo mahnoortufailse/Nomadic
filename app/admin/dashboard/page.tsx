@@ -198,7 +198,7 @@ export default function AdminDashboard() {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
           <Card className="bg-gradient-to-br from-[#FBF9D9]/90 to-[#E6CFA9]/80 backdrop-blur-sm border-[#D3B88C]/50 shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardHeader className="pb-4 border-b border-[#D3B88C]/50">
               <CardTitle className="flex items-center text-[#3C2317] text-lg font-semibold">
@@ -211,7 +211,7 @@ export default function AdminDashboard() {
                 </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent className="pt-2 !p-0">
               <ChartContainer
                 config={{
                   bookings: {
@@ -242,7 +242,7 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-[#FBF9D9]/90 to-[#E6CFA9]/80 backdrop-blur-sm border-[#D3B88C]/50 shadow-xl hover:shadow-2xl transition-all duration-300">
+          <Card className="bg-gradient-to-br from-[#FBF9D9]/90 to-[#E6CFA9]/80 backdrop-blur-sm border-[#D3B88C]/50 shadow-xl hover:shadow-2xl transition-all duration-300 ">
             <CardHeader className="pb-4 border-b border-[#D3B88C]/50">
               <CardTitle className="flex items-center text-[#3C2317] text-lg font-semibold">
                 <div className="w-12 h-12 bg-gradient-to-br from-[#84cc16] to-[#65a30d] rounded-xl flex items-center justify-center mr-4 shadow-lg">
@@ -262,12 +262,12 @@ export default function AdminDashboard() {
                     color: "#84cc16",
                   },
                 }}
-                className="h-[320px] w-full"
+                className="h-[320px] w-full !p-0"
               >
                 <BarChart
                   data={chartData.locationStats}
                   layout="horizontal"
-                  margin={{ top: 20, right: 0, left: 0, bottom: 5 }}
+                  margin={{ top: 10, right: 0, left: 0, bottom: 5 }}
                 >
                   <defs>
                     <linearGradient id="locationGradient" x1="0" y1="0" x2="1" y2="0">
@@ -280,7 +280,7 @@ export default function AdminDashboard() {
                   <YAxis
                     dataKey="location"
                     type="category"
-                    width={80}
+                    width={60}
                     stroke="#3C2317"
                     fontSize={12}
                     tickLine={false}

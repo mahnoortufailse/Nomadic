@@ -199,7 +199,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             <Button
               onClick={() => signOut({ callbackUrl: "/admin/login" })}
-              className="w-full bg-gradient-to-r from-[#3C2317]/10 to-[#5D4037]/10 hover:from-[#3C2317]/20 hover:to-[#5D4037]/20 text-[#3C2317] border border-[#D3B88C]/50 hover:border-[#3C2317]/30"
+              className="w-full bg-gradient-to-r from-[#3C2317]/10 to-[#5D4037]/10 hover:from-[#3C2317]/20 hover:to-[#5D4037]/20 text-[#3C2317] border border-[#D3B88C]/50 hover:border-[#3C2317]/30 cursor-pointer"
               variant="outline"
             >
               <LogOut className="w-4 h-4 mr-2" />
