@@ -7,9 +7,10 @@ import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { LogOut, LayoutDashboard, ShoppingCart, Settings, Tent, Menu, X, MapPin } from "lucide-react"
+import { LogOut, LayoutDashboard, ShoppingCart, Settings, Tent, Menu, X } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
@@ -115,21 +116,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Sidebar Header */}
           <div className="p-6 border-b border-[#D3B88C]/50">
             <div className="flex items-center justify-between">
-              <Link href="/admin/dashboard" className="flex items-center space-x-3 group">
+              <Link href="/admin/dashboard" className="flex flex-col items-center space-x-3 group">
                 <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                    <MapPin className="w-6 h-6 text-[#FBF9D9]" />
-                  </div>
-                  <div className="absolute -inset-1 bg-gradient-to-br from-[#3C2317]/20 to-[#5D4037]/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Image
+                    src="/logo.png"
+                    alt="NOMADIC"
+                    width={140}
+                    height={45}
+                    className="h-10 w-auto group-hover:scale-105 transition-all duration-300"
+                  />
                 </div>
-                <div>
-                  <span className="text-xl font-bold tracking-wide text-[#3C2317]">NOMADIC</span>
+                {/* <div>
                   <div className="flex items-center space-x-2 mt-1">
                     <Badge variant="outline" className="border-[#D3B88C] text-[#3C2317] bg-[#D3B88C]/20 text-xs">
                       Admin Panel
                     </Badge>
                   </div>
-                </div>
+                </div> */}
               </Link>
 
               <Button
@@ -221,10 +224,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Button>
 
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-full flex items-center justify-center">
-                <MapPin className="w-4 h-4 text-[#FBF9D9]" />
-              </div>
-              <span className="text-base font-bold text-[#3C2317]">NOMADIC</span>
+              <Image src="/logo.png" alt="NOMADIC" width={100} height={32} className="h-6 w-auto" />
             </div>
           </div>
         </div>

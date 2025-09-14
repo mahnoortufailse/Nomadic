@@ -70,10 +70,7 @@ export default function BookingSuccessPage() {
       <nav className="border-b bg-card p-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-              <MapPin className="w-4 h-4 text-primary-foreground" />
-            </div>
-            <span className="text-2xl font-bold">NOMADIC</span>
+            <Image src="/logo.png" alt="NOMADIC" width={140} height={45} className="h-10 w-auto" />
           </Link>
         </div>
       </nav>
