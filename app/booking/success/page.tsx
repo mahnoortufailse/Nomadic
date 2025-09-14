@@ -1,39 +1,41 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { CheckCircle, MapPin, Calendar, Users, Mail } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
-import type { Booking } from "@/lib/types"
-
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CheckCircle, MapPin, Calendar, Users, Mail } from "lucide-react";
+import Link from "next/link";
+import type { Booking } from "@/lib/types";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import Image from "next/image";
 export default function BookingSuccessPage() {
-  const searchParams = useSearchParams()
-  const sessionId = searchParams.get("session_id")
-  const [booking, setBooking] = useState<Booking | null>(null)
-  const [loading, setLoading] = useState(true)
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+  const [booking, setBooking] = useState<Booking | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (sessionId) {
-      fetchBookingDetails()
+      fetchBookingDetails();
     }
-  }, [sessionId])
+  }, [sessionId]);
 
   const fetchBookingDetails = async () => {
     try {
-      const response = await fetch(`/api/booking-success?session_id=${sessionId}`)
+      const response = await fetch(
+        `/api/booking-success?session_id=${sessionId}`
+      );
       if (response.ok) {
-        const data = await response.json()
-        setBooking(data.booking)
+        const data = await response.json();
+        setBooking(data.booking);
       }
     } catch (error) {
-      console.error("Error fetching booking details:", error)
+      console.error("Error fetching booking details:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -43,7 +45,7 @@ export default function BookingSuccessPage() {
           <p>Loading your booking details...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!booking) {
@@ -51,14 +53,16 @@ export default function BookingSuccessPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="max-w-md">
           <CardContent className="text-center p-6">
-            <p className="text-destructive mb-4">Unable to load booking details</p>
+            <p className="text-destructive mb-4">
+              Unable to load booking details
+            </p>
             <Button asChild>
               <Link href="/">Return Home</Link>
             </Button>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -67,7 +71,13 @@ export default function BookingSuccessPage() {
       <nav className="border-b bg-card p-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <Image src="/logo.png" alt="NOMADIC" width={140} height={45} className="h-10 w-auto" />
+            <Image
+              src="/logo.png"
+              alt="NOMADIC"
+              width={140}
+              height={45}
+              className="h-10 w-auto"
+            />
           </Link>
         </div>
       </nav>
@@ -75,12 +85,17 @@ export default function BookingSuccessPage() {
       <div className="max-w-4xl mx-auto p-6">
         {/* Success Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-green-600" />
+          <div className="w-full flex justify-center">
+            <div className="w-96 ">
+              {" "}
+              {/* controls the size */}
+              <DotLottieReact src="/tent.lottie" loop autoplay />
+            </div>
           </div>
-          <h1 className="text-4xl font-bold mb-4">Booking Confirmed!</h1>
+
           <p className="text-xl text-muted-foreground">
-            Thank you for choosing NOMADIC. Your desert adventure is booked and confirmed.
+            Thank you for choosing Nomadic. Your desert adventure is booked and
+            confirmed.
           </p>
         </div>
 
@@ -119,18 +134,23 @@ export default function BookingSuccessPage() {
                 <div>
                   <p className="font-medium">Tents</p>
                   <p className="text-muted-foreground">
-                    {booking.numberOfTents} tent{booking.numberOfTents > 1 ? "s" : ""}
+                    {booking.numberOfTents} tent
+                    {booking.numberOfTents > 1 ? "s" : ""}
                   </p>
                 </div>
               </div>
 
-              {(booking.addOns.charcoal || booking.addOns.firewood || booking.addOns.portableToilet) && (
+              {(booking.addOns.charcoal ||
+                booking.addOns.firewood ||
+                booking.addOns.portableToilet) && (
                 <div>
                   <p className="font-medium mb-2">Add-ons</p>
                   <ul className="text-muted-foreground space-y-1">
                     {booking.addOns.charcoal && <li>• Charcoal</li>}
                     {booking.addOns.firewood && <li>• Firewood</li>}
-                    {booking.addOns.portableToilet && <li>• Portable Toilet</li>}
+                    {booking.addOns.portableToilet && (
+                      <li>• Portable Toilet</li>
+                    )}
                   </ul>
                 </div>
               )}
@@ -169,7 +189,9 @@ export default function BookingSuccessPage() {
               <div className="bg-green-50 p-4 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span className="font-medium text-green-800">Payment Successful</span>
+                  <span className="font-medium text-green-800">
+                    Payment Successful
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -187,7 +209,8 @@ export default function BookingSuccessPage() {
               <div>
                 <p className="font-medium">Confirmation Email</p>
                 <p className="text-muted-foreground">
-                  You'll receive a detailed confirmation email at {booking.customerEmail} within the next few minutes.
+                  You'll receive a detailed confirmation email at{" "}
+                  {booking.customerEmail} within the next few minutes.
                 </p>
               </div>
             </div>
@@ -197,7 +220,8 @@ export default function BookingSuccessPage() {
               <div>
                 <p className="font-medium">Pre-Trip Contact</p>
                 <p className="text-muted-foreground">
-                  Our team will contact you 24-48 hours before your trip with final details and meeting instructions.
+                  Our team will contact you 24-48 hours before your trip with
+                  final details and meeting instructions.
                 </p>
               </div>
             </div>
@@ -207,7 +231,8 @@ export default function BookingSuccessPage() {
               <div>
                 <p className="font-medium">Adventure Day</p>
                 <p className="text-muted-foreground">
-                  Arrive at the designated meeting point and get ready for an unforgettable desert experience!
+                  Arrive at the designated meeting point and get ready for an
+                  unforgettable desert experience!
                 </p>
               </div>
             </div>
@@ -258,5 +283,5 @@ export default function BookingSuccessPage() {
         />
       </div>
     </div>
-  )
+  );
 }

@@ -12,6 +12,7 @@
     "@auth/core": "latest",
     "@aws-sdk/credential-providers": "latest",
     "@hookform/resolvers": "^3.10.0",
+    "@lottiefiles/dotlottie-react": "^0.16.1",
     "@mongodb-js/zstd": "latest",
     "@radix-ui/react-accordion": "latest",
     "@radix-ui/react-alert-dialog": "latest",
