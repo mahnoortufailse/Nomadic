@@ -93,14 +93,7 @@ export default function BookingSuccessPage() {
                 className="h-10 w-auto"
               />
             </Link>
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-1 text-[#D3B88C]">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current" />
-                ))}
-              </div>
-              <span className="text-sm text-white/80">Luxury Certified</span>
-            </div>
+           
           </div>
         </div>
       </nav>
@@ -215,14 +208,14 @@ export default function BookingSuccessPage() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 p-4 rounded-xl border border-[#D3B88C]/30">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-5 h-5 text-[#3C2317]" />
-                  <span className="font-medium text-[#3C2317]">
-                    Payment Successful
-                  </span>
-                </div>
-              </div>
+              <div className="bg-gradient-to-r from-[#84cc16]/20 to-[#65a30d]/20 p-4 rounded-xl border border-[#84cc16]/30">
+  <div className="flex items-center space-x-2">
+    <CheckCircle className="w-5 h-5 text-[#3f6212]" />
+    <span className="font-medium text-[#365314]">
+      Payment Successful
+    </span>
+  </div>
+</div>
             </CardContent>
           </Card>
         </div>
@@ -284,7 +277,7 @@ export default function BookingSuccessPage() {
             asChild
             variant="outline"
             size="lg"
-            className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#3C2317]/5 text-[#3C2317] transition-all duration-300"
+            className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#3C2317]/5 text-[#3C2317] transition-all duration-300 hover:text-[#3C2317]"
           >
             <Link href="/">Book Another Trip</Link>
           </Button>

@@ -23,14 +23,7 @@ export default function BookingFailedPage() {
                 className="h-10 w-auto"
               />
             </Link>
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-1 text-[#D3B88C]">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current" />
-                ))}
-              </div>
-              <span className="text-sm text-white/80">Luxury Certified</span>
-            </div>
+            
           </div>
         </div>
       </nav>
