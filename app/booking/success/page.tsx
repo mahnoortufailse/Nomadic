@@ -8,6 +8,7 @@ import { CheckCircle, MapPin, Calendar, Users, Mail } from "lucide-react";
 import Link from "next/link";
 import type { Booking } from "@/lib/types";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import Image from "next/image";
 export default function BookingSuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
