@@ -13,11 +13,13 @@
   --popover-foreground: #4b5563; /* Popover text color */
   --primary: #0891b2; /* Primary action color */
   --primary-foreground: #ffffff; /* Primary action text color */
-  --secondary: #84cc16; /* Accent color */
+  /* Replaced parrot green with professional teal accent */
+  --secondary: #0d9488; /* Accent color - professional teal */
   --secondary-foreground: #ffffff; /* Secondary text color */
   --muted: #f0fdf4; /* Muted background */
   --muted-foreground: #374151; /* Muted text color */
-  --accent: #84cc16; /* Accent color */
+  /* Updated accent to match secondary teal theme */
+  --accent: #0d9488; /* Accent color - professional teal */
   --accent-foreground: #ffffff; /* Accent text color */
   --destructive: #be123c; /* Error color */
   --destructive-foreground: #ffffff; /* Error text color */
@@ -34,7 +36,8 @@
   --sidebar-foreground: #4b5563; /* Sidebar text */
   --sidebar-primary: #ffffff; /* Sidebar primary background */
   --sidebar-primary-foreground: #4b5563; /* Sidebar primary text */
-  --sidebar-accent: #84cc16; /* Sidebar accent */
+  /* Updated sidebar accent to match new teal theme */
+  --sidebar-accent: #0d9488; /* Sidebar accent - professional teal */
   --sidebar-accent-foreground: #ffffff; /* Sidebar accent text */
   --sidebar-border: #e5e7eb; /* Sidebar border color */
   --sidebar-ring: rgba(8, 145, 178, 0.5); /* Sidebar focus ring */
@@ -53,7 +56,8 @@
   --secondary-foreground: #f1f5f9;
   --muted: #1e293b;
   --muted-foreground: #94a3b8;
-  --accent: #84cc16;
+  /* Updated dark mode accent to complement the theme */
+  --accent: #0d9488;
   --accent-foreground: #ffffff;
   --destructive: #be123c;
   --destructive-foreground: #ffffff;
@@ -69,7 +73,8 @@
   --sidebar-foreground: #f8fafc;
   --sidebar-primary: #0891b2;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #84cc16;
+  /* Updated dark mode sidebar accent to match theme */
+  --sidebar-accent: #0d9488;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #334155;
   --sidebar-ring: rgba(8, 145, 178, 0.5);

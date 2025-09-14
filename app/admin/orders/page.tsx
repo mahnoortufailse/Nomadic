@@ -152,7 +152,7 @@ export default function OrdersPage() {
                     placeholder="Search by name, email, or phone..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-12 h-12 border-[#D3B88C]/30 focus:border-[#3C2317] focus:ring-[#3C2317]/20 bg-white/70 text-base"
+                    className="pl-12 h-10 border-[#D3B88C]/30 focus:border-[#3C2317] focus:ring-[#3C2317]/20 bg-white/70 text-base"
                   />
                 </div>
               </div>
@@ -166,7 +166,7 @@ export default function OrdersPage() {
                   <SelectItem value="Desert">Desert</SelectItem>
                   <SelectItem value="Mountain">Mountain</SelectItem>
                   <SelectItem value="Wadi">Wadi</SelectItem>
-                  <SelectItem value="Private Events">Private Events</SelectItem>
+                  
                 </SelectContent>
               </Select>
             </div>
@@ -258,10 +258,10 @@ export default function OrdersPage() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() => setSelectedBooking(booking)}
-                                    className="border-[#D3B88C] text-[#3C2317] bg-white h-9 px-3"
+                                    className="border-[#D3B88C] text-[#3C2317] bg-white h-9 px-3 hover:bg-[#D3B88C] cursor-pointer"
                                   >
                                     <Eye className="w-4 h-4" />
-                                    <span className="hidden sm:inline ml-2 text-xs">View</span>
+                                    {/* <span className="hidden sm:inline ml-1 text-xs">View</span> */}
                                   </Button>
                                 </DialogTrigger>
                                 <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9] border-2 border-[#D3B88C]/50 shadow-2xl">
@@ -273,7 +273,7 @@ export default function OrdersPage() {
                                   </DialogHeader>
                                   {selectedBooking && (
                                     <div className="space-y-8 pt-6">
-                                      <div className="grid md:grid-cols-2 gap-8">
+                                      <div className="grid md:grid-cols-1 gap-8">
                                         <div className="space-y-6">
                                           <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-[#D3B88C]/30 shadow-sm">
                                             <h4 className="font-bold mb-4 text-[#3C2317] border-b border-[#D3B88C]/30 pb-3 flex items-center text-lg">
@@ -438,15 +438,15 @@ export default function OrdersPage() {
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    className="border-red-200 text-red-600 bg-white h-9 px-3"
+                                    className="border-red-200 text-red-600 bg-white h-9 px-3 hover:bg-red-600 hover:text-white cursor-pointer"
                                     disabled={deleteLoading === booking._id}
                                   >
                                     {deleteLoading === booking._id ? (
-                                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
+                                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 "></div>
                                     ) : (
                                       <Trash2 className="w-4 h-4" />
                                     )}
-                                    <span className="hidden sm:inline ml-2 text-xs">Delete</span>
+                                    
                                   </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent className="bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9] border-2 border-red-200 shadow-2xl">

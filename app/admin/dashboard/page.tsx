@@ -5,11 +5,24 @@ import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts"
-import { MapPin, Calendar, Users, DollarSign, Eye, TrendingUp, Tent, Star } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { MapPin, Calendar, Users, DollarSign, Eye, TrendingUp, Tent, Star, Trash2, AlertCircle } from "lucide-react"
+import { toast } from "sonner"
 import type { Booking } from "@/lib/types"
 
 function formatDate(date: string | Date) {
@@ -25,14 +38,10 @@ function formatDate(date: string | Date) {
 }
 
 function getStatusBadge(booking: Booking) {
-  const status = booking?.status?.toLowerCase()
-  if (status === "paid") {
-    return <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">Paid</span>
+  if (booking.isPaid) {
+    return <Badge className="bg-green-100 text-green-800 border-green-200 font-medium">Paid</Badge>
   }
-  if (status === "pending") {
-    return <span className="px-2 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded">Pending</span>
-  }
-  return <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">Unknown</span>
+  return <Badge className="bg-amber-100 text-amber-800 border-amber-200 font-medium">Pending</Badge>
 }
 
 export default function AdminDashboard() {
@@ -40,6 +49,7 @@ export default function AdminDashboard() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
   const [stats, setStats] = useState({
     totalBookings: 0,
     paidBookings: 0,
@@ -69,7 +79,6 @@ export default function AdminDashboard() {
       const statsData = await statsResponse.json()
       setStats(statsData)
 
-      // Fetch chart data from charts API
       const chartResponse = await fetch("/api/charts")
       const chartDataResponse = await chartResponse.json()
       setChartData({
@@ -84,6 +93,27 @@ export default function AdminDashboard() {
       console.error("Error fetching dashboard data:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDeleteBooking = async (bookingId: string) => {
+    setDeleteLoading(bookingId)
+    try {
+      const response = await fetch(`/api/bookings/${bookingId}`, {
+        method: "DELETE",
+      })
+
+      if (response.ok) {
+        setBookings(bookings.filter((booking) => booking._id !== bookingId))
+        toast.success("Booking deleted successfully")
+      } else {
+        toast.error("Failed to delete booking")
+      }
+    } catch (error) {
+      console.error("Error deleting booking:", error)
+      toast.error("Failed to delete booking")
+    } finally {
+      setDeleteLoading(null)
     }
   }
 
@@ -324,19 +354,193 @@ export default function AdminDashboard() {
                         </TableCell>
                         <TableCell className="py-4 px-6">{getStatusBadge(booking)}</TableCell>
                         <TableCell className="py-4 px-6">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setSelectedBooking(booking)}
-                                className="border-[#D3B88C] text-[#3C2317] bg-white h-9 px-3"
-                              >
-                                <Eye className="w-4 h-4 mr-2" />
-                                <span className="hidden sm:inline">View</span>
-                              </Button>
-                            </DialogTrigger>
-                          </Dialog>
+                          <div className="flex items-center gap-2">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setSelectedBooking(booking)}
+                                  className="border-[#D3B88C] text-[#3C2317] bg-white h-9 px-3 hover:bg-[#D3B88C] cursor-pointer"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                  
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9] border-2 border-[#D3B88C]/50 shadow-2xl">
+                                <DialogHeader className="border-b border-[#D3B88C]/30 pb-6">
+                                  <DialogTitle className="text-[#3C2317] text-2xl font-bold flex items-center">
+                                    <Tent className="w-7 h-7 mr-3 text-[#D3B88C]" />
+                                    Order Details - #{selectedBooking?._id.slice(-6).toUpperCase()}
+                                  </DialogTitle>
+                                </DialogHeader>
+                                {selectedBooking && (
+                                  <div className="space-y-8 pt-6">
+                                    <div className="grid md:grid-cols-1 gap-8">
+                                      <div className="space-y-6">
+                                        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-[#D3B88C]/30 shadow-sm">
+                                          <h4 className="font-bold mb-4 text-[#3C2317] border-b border-[#D3B88C]/30 pb-3 flex items-center text-lg">
+                                            <Users className="w-5 h-5 mr-3 text-[#D3B88C]" />
+                                            Customer Information
+                                          </h4>
+                                          <div className="space-y-4">
+                                            <div className="flex justify-between items-start">
+                                              <span className="text-[#3C2317]/70 font-medium">Name:</span>
+                                              <span className="font-semibold text-[#3C2317] text-right max-w-[200px] break-words">
+                                                {selectedBooking.customerName}
+                                              </span>
+                                            </div>
+                                            <div className="flex justify-between items-start">
+                                              <span className="text-[#3C2317]/70 font-medium">Email:</span>
+                                              <span className="font-semibold text-[#3C2317] text-right max-w-[200px] break-all text-sm">
+                                                {selectedBooking.customerEmail}
+                                              </span>
+                                            </div>
+                                            <div className="flex justify-between items-start">
+                                              <span className="text-[#3C2317]/70 font-medium">Phone:</span>
+                                              <span className="font-semibold text-[#3C2317] text-right">
+                                                {selectedBooking.customerPhone}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <div className="space-y-6">
+                                        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-[#D3B88C]/30 shadow-sm">
+                                          <h4 className="font-bold mb-4 text-[#3C2317] border-b border-[#D3B88C]/30 pb-3 flex items-center text-lg">
+                                            <Calendar className="w-5 h-5 mr-3 text-[#D3B88C]" />
+                                            Booking Details
+                                          </h4>
+                                          <div className="space-y-4">
+                                            <div className="flex justify-between items-center">
+                                              <span className="text-[#3C2317]/70 font-medium">Date:</span>
+                                              <span className="font-semibold text-[#3C2317]">
+                                                {formatDate(selectedBooking.bookingDate)}
+                                              </span>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                              <span className="text-[#3C2317]/70 font-medium">Location:</span>
+                                              <span className="font-semibold text-[#3C2317]">
+                                                {selectedBooking.location}
+                                              </span>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                              <span className="text-[#3C2317]/70 font-medium">Tents:</span>
+                                              <span className="font-semibold text-[#3C2317]">
+                                                {selectedBooking.numberOfTents}
+                                              </span>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                              <span className="text-[#3C2317]/70 font-medium">Children:</span>
+                                              <span className="font-semibold text-[#3C2317]">
+                                                {selectedBooking.hasChildren ? "Yes" : "No"}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {selectedBooking.notes && (
+                                      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-[#D3B88C]/30 shadow-sm">
+                                        <h4 className="font-bold mb-4 text-[#3C2317] border-b border-[#D3B88C]/30 pb-3 text-lg">
+                                          Special Notes
+                                        </h4>
+                                        <p className="text-[#3C2317] bg-[#E6CFA9]/40 p-4 rounded-lg leading-relaxed break-words">
+                                          {selectedBooking.notes}
+                                        </p>
+                                      </div>
+                                    )}
+
+                                    <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-[#D3B88C]/30 shadow-sm">
+                                      <h4 className="font-bold mb-4 text-[#3C2317] border-b border-[#D3B88C]/30 pb-3 flex items-center text-lg">
+                                        <DollarSign className="w-5 h-5 mr-3 text-[#D3B88C]" />
+                                        Payment Summary
+                                      </h4>
+                                      <div className="space-y-4">
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-[#3C2317]/70 font-medium">Subtotal:</span>
+                                          <span className="font-semibold text-[#3C2317]">
+                                            AED {selectedBooking.subtotal.toFixed(2)}
+                                          </span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-[#3C2317]/70 font-medium">VAT (5%):</span>
+                                          <span className="font-semibold text-[#3C2317]">
+                                            AED {selectedBooking.vat.toFixed(2)}
+                                          </span>
+                                        </div>
+                                        <div className="flex justify-between items-center border-t border-[#D3B88C]/30 pt-4">
+                                          <span className="font-bold text-[#3C2317] text-xl">Total:</span>
+                                          <span className="font-bold text-[#0891b2] text-2xl">
+                                            AED {selectedBooking.total.toFixed(2)}
+                                          </span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-[#3C2317]/70 font-medium">Status:</span>
+                                          <span>{getStatusBadge(selectedBooking)}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </DialogContent>
+                            </Dialog>
+
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border-red-200 text-red-600 bg-white h-9 px-3 hover:bg-red-600 hover:text-white cursor-pointer"
+                                  disabled={deleteLoading === booking._id}
+                                >
+                                  {deleteLoading === booking._id ? (
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
+                                  ) : (
+                                    <Trash2 className="w-4 h-4" />
+                                  )}
+                                  <span className="hidden sm:inline ml-1 text-xs">Delete</span>
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9] border-2 border-red-200 shadow-2xl">
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle className="text-red-600 text-xl font-bold flex items-center">
+                                    <AlertCircle className="w-6 h-6 mr-3" />
+                                    Delete Order
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription className="text-[#3C2317] text-base leading-relaxed">
+                                    Are you sure you want to delete this order? This action cannot be undone.
+                                    <div className="mt-4 p-4 bg-red-50 rounded-lg border border-red-200">
+                                      <div className="text-sm space-y-2">
+                                        <div>
+                                          <strong>Order:</strong> #{booking._id.slice(-6).toUpperCase()}
+                                        </div>
+                                        <div>
+                                          <strong>Customer:</strong> {booking.customerName}
+                                        </div>
+                                        <div>
+                                          <strong>Total:</strong> AED {booking.total.toFixed(2)}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel className="border-[#D3B88C] text-[#3C2317]">
+                                    Cancel
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDeleteBooking(booking._id)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                  >
+                                    Delete Order
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}

@@ -564,47 +564,41 @@ export default function BookingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FBF9D9] via-[#E6CFA9] to-[#D3B88C]">
       <nav className="bg-[#3C2317]/90 backdrop-blur-md border-b border-[#3C2317]/50 shadow-lg sticky top-0 z-50 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 sm:py-3">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
+            <Link href="/" className="flex items-center space-x-2 group">
               <div className="relative">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-[#FBF9D9]" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-[#FBF9D9]" />
                 </div>
                 <div className="absolute -inset-1 bg-gradient-to-br from-[#3C2317]/20 to-[#5D4037]/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
               <div>
-                <span className="text-xl sm:text-2xl md:text-3xl font-bold tracking-wide text-white">NOMADIC</span>
-                <p className="text-xs sm:text-sm text-white/80">Premium Desert Experiences</p>
+                <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-wide text-white">NOMADIC</span>
+                <p className="text-xs text-white/80">Premium Desert Experiences</p>
               </div>
             </Link>
-            <div className="flex items-center space-x-1 sm:space-x-2">
-              <div className="flex items-center space-x-0.5 sm:space-x-1 text-[#D3B88C]">
+            <div className="flex items-center space-x-1">
+              <div className="flex items-center space-x-0.5 text-[#D3B88C]">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-current" />
+                  <Star key={i} className="w-3 h-3 fill-current" />
                 ))}
               </div>
-              <span className="text-xs sm:text-sm text-white/80 hidden sm:block">Luxury Certified</span>
+              <span className="text-xs text-white/80 hidden sm:block">Luxury Certified</span>
             </div>
           </div>
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-        <div className="mb-8 sm:mb-12 animate-fade-in-up">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+        <div className="mb-6 sm:mb-8 animate-fade-in-up">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="lg:col-span-3">
-              <div className="relative h-[300px] sm:h-[400px] md:h-[500px] rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl group">
+              <div className="relative h-[250px] sm:h-[300px] md:h-[400px] rounded-xl overflow-hidden shadow-xl group">
                 <Image
                   src={
                     campingImages[currentImageIndex].src ||
-                    "/placeholder.svg?height=500&width=800&query=luxury desert camping" ||
-                    "/placeholder.svg" ||
-                    "/placeholder.svg" ||
-                    "/placeholder.svg" ||
-                    "/placeholder.svg" ||
-                    "/placeholder.svg" ||
-                    "/placeholder.svg" ||
+                    "/placeholder.svg?height=400&width=800&query=luxury desert camping" ||
                     "/placeholder.svg"
                   }
                   alt={campingImages[currentImageIndex].alt}
@@ -613,103 +607,101 @@ export default function BookingPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#3C2317]/40 via-transparent to-transparent"></div>
 
-                <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 text-[#FBF9D9]">
-                  <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
-                    <div className="flex space-x-0.5 sm:space-x-1">
+                <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 text-[#FBF9D9]">
+                  <div className="flex items-center space-x-1 mb-1">
+                    <div className="flex space-x-0.5">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-current text-[#D3B88C]" />
+                        <Star key={i} className="w-3 h-3 fill-current text-[#D3B88C]" />
                       ))}
                     </div>
-                    <span className="text-xs sm:text-sm font-medium">Premium Experience</span>
+                    <span className="text-xs font-medium">Premium Experience</span>
                   </div>
-                  <p className="text-xs sm:text-sm opacity-90 max-w-xs">{campingImages[currentImageIndex].alt}</p>
+                  <p className="text-xs opacity-90 max-w-xs">{campingImages[currentImageIndex].alt}</p>
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 sm:gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
               {campingImages.slice(1, 5).map((image, index) => (
                 <div
                   key={index}
-                  className="relative h-[70px] sm:h-[90px] md:h-[115px] rounded-lg sm:rounded-xl overflow-hidden shadow-md sm:shadow-lg cursor-pointer group transition-all duration-300 hover:shadow-xl hover:scale-105"
+                  className="relative h-[60px] sm:h-[70px] md:h-[95px] rounded-lg overflow-hidden shadow-md cursor-pointer group transition-all duration-300 hover:shadow-xl hover:scale-105"
                   onClick={() => setCurrentImageIndex(index + 1)}
                 >
                   <Image
-                    src={image.src || "/placeholder.svg?height=115&width=200&query=camping scene"}
+                    src={image.src || "/placeholder.svg?height=95&width=200&query=camping scene"}
                     alt={image.alt}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-[#3C2317]/20 group-hover:bg-[#3C2317]/10 transition-colors duration-300"></div>
                   {currentImageIndex === index + 1 && (
-                    <div className="absolute inset-0 border-2 sm:border-3 border-[#D3B88C] rounded-lg sm:rounded-xl"></div>
+                    <div className="absolute inset-0 border-2 border-[#D3B88C] rounded-lg"></div>
                   )}
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="text-center lg:text-left mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#3C2317] mb-3 sm:mb-4 text-balance">
+          <div className="text-center lg:text-left mb-4 sm:mb-6">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#3C2317] mb-2 sm:mb-3 text-balance">
               Nomadic <span className="text-[#D3B88C]">Premium</span> Camping
             </h1>
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4 sm:mb-6">
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 md:gap-6 mb-3 sm:mb-4 lg:mb-0">
-                <div className="flex items-center space-x-1 sm:space-x-2 text-[#3C2317]/80">
-                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-[#D3B88C]" />
-                  <span className="text-sm sm:text-base font-medium">Desert • Wadi • Mountain</span>
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-3 sm:mb-4">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-3 mb-2 sm:mb-3 lg:mb-0">
+                <div className="flex items-center space-x-1 text-[#3C2317]/80">
+                  <MapPin className="w-4 h-4 text-[#D3B88C]" />
+                  <span className="text-sm font-medium">Desert • Wadi • Mountain</span>
                 </div>
-                <div className="flex items-center space-x-1 sm:space-x-2">
-                  <div className="flex space-x-0.5 sm:space-x-1">
+                <div className="flex items-center space-x-1">
+                  <div className="flex space-x-0.5">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-current text-[#D3B88C]" />
+                      <Star key={i} className="w-3 h-3 fill-current text-[#D3B88C]" />
                     ))}
                   </div>
-                  <span className="text-sm sm:text-base text-[#3C2317]/80 font-medium">Luxury Certified</span>
+                  <span className="text-sm text-[#3C2317]/80 font-medium">Luxury Certified</span>
                 </div>
-                <div className="flex items-center space-x-1 sm:space-x-2 text-[#3C2317]/80">
-                  <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-[#D3B88C]" />
-                  <span className="text-sm sm:text-base font-medium">Private & Secure</span>
+                <div className="flex items-center space-x-1 text-[#3C2317]/80">
+                  <Shield className="w-4 h-4 text-[#D3B88C]" />
+                  <span className="text-sm font-medium">Private & Secure</span>
                 </div>
               </div>
             </div>
-            <p className="text-base sm:text-lg text-[#3C2317]/80 max-w-2xl text-pretty mx-auto lg:mx-0">
+            <p className="text-sm sm:text-base text-[#3C2317]/80 max-w-2xl text-pretty mx-auto lg:mx-0">
               Experience the UAE's most luxurious camping adventure with premium amenities, breathtaking locations, and
               unforgettable memories under the stars.
             </p>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
-          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
-            <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 animate-scale-in bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
-              <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
-                <CardTitle className="text-[#3C2317] flex items-center space-x-2 sm:space-x-3 text-lg sm:text-xl">
-                  <Users className="w-5 h-5 sm:w-6 sm:h-6 text-[#3C2317]" />
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+            <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 animate-scale-in bg-[#FBF9D9]/80 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+                <CardTitle className="text-[#3C2317] flex items-center space-x-2 text-lg">
+                  <Users className="w-5 h-5 text-[#3C2317]" />
                   <span>Who's joining the adventure?</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-4 sm:p-6 md:p-8">
-                <p className="text-[#3C2317]/80 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">
+              <CardContent className="p-4 sm:p-6">
+                <p className="text-[#3C2317]/80 mb-4 leading-relaxed text-sm">
                   Each luxury tent accommodates up to 4 guests comfortably. Let us know your group size so we can create
                   the perfect setup for your desert experience.
                 </p>
-                <div className="flex items-center justify-center space-x-4 sm:space-x-6">
+                <div className="flex items-center justify-center space-x-4">
                   <Button
                     type="button"
                     variant="outline"
                     size="lg"
                     onClick={() => handleGuestChange(false)}
                     disabled={guestCount <= 1}
-                    className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#3C2317]/5 transition-all duration-300 h-10 w-10 sm:h-12 sm:w-12 rounded-xl"
+                    className="border-2 border-[#D3B88C] hover:border-[#3C2317] cursor-pointer transition-all duration-300 h-10 w-10 rounded-xl hover:bg-[#D3B88C]"
                   >
-                    <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <Minus className="h-4 w-4" />
                   </Button>
-                  <div className="flex items-center space-x-2 sm:space-x-4 px-4 sm:px-6 py-2 sm:py-3 md:py-4 bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 rounded-xl sm:rounded-2xl border border-[#D3B88C]/30">
-                    <Users className="h-5 w-5 sm:h-6 sm:w-6 text-[#3C2317]" />
-                    <span className="text-xl sm:text-2xl font-bold text-[#3C2317]">{guestCount}</span>
-                    <span className="text-[#3C2317]/80 font-medium text-sm sm:text-base">
-                      guest{guestCount !== 1 ? "s" : ""}
-                    </span>
+                  <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 rounded-xl border border-[#D3B88C]/30">
+                    <Users className="h-5 w-5 text-[#3C2317]" />
+                    <span className="text-xl font-bold text-[#3C2317]">{guestCount}</span>
+                    <span className="text-[#3C2317]/80 font-medium text-sm">guest{guestCount !== 1 ? "s" : ""}</span>
                   </div>
                   <Button
                     type="button"
@@ -717,24 +709,24 @@ export default function BookingPage() {
                     size="lg"
                     onClick={() => handleGuestChange(true)}
                     disabled={guestCount >= 20}
-                    className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#3C2317]/5 transition-all duration-300 h-10 w-10 sm:h-12 sm:w-12 rounded-xl"
+                    className="border-2 border-[#D3B88C] hover:border-[#3C2317] cursor-pointer hover:bg-[#D3B88C] transition-all duration-300 h-10 w-10 rounded-xl"
                   >
-                    <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <Plus className="h-4 w-4" />
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
-              <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
-                <CardTitle className="text-[#3C2317] flex items-center space-x-2 sm:space-x-3 text-lg sm:text-xl">
-                  <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-[#3C2317]" />
+            <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+                <CardTitle className="text-[#3C2317] flex items-center space-x-2 text-lg">
+                  <Calendar className="w-5 h-5 text-[#3C2317]" />
                   <span>Choose your perfect date</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-4 sm:p-6 md:p-8">
-                <div className="mb-3 sm:mb-4">
-                  <Label htmlFor="bookingDate" className="text-[#3C2317] font-medium mb-2 sm:mb-3 block">
+              <CardContent className="p-4 sm:p-6">
+                <div className="mb-3">
+                  <Label htmlFor="bookingDate" className="text-[#3C2317] font-medium mb-2 block">
                     Select Date *
                   </Label>
                 </div>
@@ -752,32 +744,32 @@ export default function BookingPage() {
                   onBlur={(e) => handleBlur("bookingDate", e.target.value)}
                   min={minDate.toISOString().split("T")[0]}
                   className={cn(
-                    "border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-12 sm:h-14 rounded-xl",
+                    "border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-10 sm:h-12 rounded-xl cursor-pointer",
                     errors.bookingDate && touched.bookingDate && "border-red-500 focus:border-red-500",
                   )}
                 />
 
                 {errors.bookingDate && touched.bookingDate && (
-                  <p className="text-sm text-red-600 mt-2 sm:mt-3 flex items-center space-x-1 sm:space-x-2">
-                    <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <p className="text-sm text-red-600 mt-2 flex items-center space-x-1">
+                    <X className="w-3 h-3" />
                     <span>{errors.bookingDate}</span>
                   </p>
                 )}
-                <p className="text-xs sm:text-sm text-[#3C2317]/80 mt-3 sm:mt-4 flex items-center space-x-1 sm:space-x-2">
-                  <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-[#3C2317]" />
+                <p className="text-xs text-[#3C2317]/80 mt-3 flex items-center space-x-1">
+                  <Shield className="w-3 h-3 text-[#3C2317]" />
                   <span>Minimum 2 days advance booking required for premium preparation</span>
                 </p>
               </CardContent>
             </Card>
 
-            <form className="space-y-6 sm:space-y-8">
-              <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
-                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
-                  <CardTitle className="text-[#3C2317] text-lg sm:text-xl">Personal Information</CardTitle>
+            <form className="space-y-4 sm:space-y-6">
+              <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+                  <CardTitle className="text-[#3C2317] text-lg">Personal Information</CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+                <CardContent className="p-4 sm:p-6 space-y-4">
                   <div>
-                    <Label htmlFor="customerName" className="text-[#3C2317] mb-2 sm:mb-3 block font-medium">
+                    <Label htmlFor="customerName" className="text-[#3C2317] mb-2 block font-medium">
                       Full Name *
                     </Label>
                     <Input
@@ -786,21 +778,21 @@ export default function BookingPage() {
                       onChange={(e) => handleInputChange("customerName", e.target.value)}
                       onBlur={(e) => handleBlur("customerName", e.target.value)}
                       className={cn(
-                        "border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-12 sm:h-14 rounded-xl",
+                        "border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-9 sm:h-10 rounded-xl",
                         errors.customerName && touched.customerName && "border-red-500 focus:border-red-500",
                       )}
                       placeholder="Enter your full name"
                     />
                     {errors.customerName && touched.customerName && (
-                      <p className="text-sm text-red-600 mt-2 flex items-center space-x-1 sm:space-x-2">
-                        <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <p className="text-sm text-red-600 mt-2 flex items-center space-x-1">
+                        <X className="w-3 h-3" />
                         <span>{errors.customerName}</span>
                       </p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="customerEmail" className="text-[#3C2317] mb-2 sm:mb-3 block font-medium">
+                    <Label htmlFor="customerEmail" className="text-[#3C2317] mb-2 block font-medium">
                       Email Address *
                     </Label>
                     <Input
@@ -810,21 +802,21 @@ export default function BookingPage() {
                       onChange={(e) => handleInputChange("customerEmail", e.target.value)}
                       onBlur={(e) => handleBlur("customerEmail", e.target.value)}
                       className={cn(
-                        "border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-12 sm:h-14 rounded-xl",
+                        "border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-9 sm:h-10 rounded-xl",
                         errors.customerEmail && touched.customerEmail && "border-red-500 focus:border-red-500",
                       )}
                       placeholder="your.email@example.com"
                     />
                     {errors.customerEmail && touched.customerEmail && (
-                      <p className="text-sm text-red-600 mt-2 flex items-center space-x-1 sm:space-x-2">
-                        <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <p className="text-sm text-red-600 mt-2 flex items-center space-x-1">
+                        <X className="w-3 h-3" />
                         <span>{errors.customerEmail}</span>
                       </p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="customerPhone" className="text-[#3C2317] mb-2 sm:mb-3 block font-medium">
+                    <Label htmlFor="customerPhone" className="text-[#3C2317] mb-2 block font-medium">
                       Phone Number *
                     </Label>
                     <Input
@@ -834,13 +826,13 @@ export default function BookingPage() {
                       onBlur={(e) => handleBlur("customerPhone", e.target.value)}
                       placeholder="+971501234567"
                       className={cn(
-                        "border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-12 sm:h-14 rounded-xl",
+                        "border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-9 sm:h-10 rounded-xl",
                         errors.customerPhone && touched.customerPhone && "border-red-500 focus:border-red-500",
                       )}
                     />
                     {errors.customerPhone && touched.customerPhone && (
-                      <p className="text-sm text-red-600 mt-2 flex items-center space-x-1 sm:space-x-2">
-                        <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <p className="text-sm text-red-600 mt-2 flex items-center space-x-1">
+                        <X className="w-3 h-3" />
                         <span>{errors.customerPhone}</span>
                       </p>
                     )}
@@ -848,17 +840,17 @@ export default function BookingPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
-                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
-                  <CardTitle className="text-[#3C2317] text-lg sm:text-xl">Booking Details</CardTitle>
+              <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+                  <CardTitle className="text-[#3C2317] text-lg">Booking Details</CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+                <CardContent className="p-4 sm:p-6 space-y-4">
                   <div>
-                    <Label className="text-[#3C2317] mb-2 sm:mb-3 block font-medium">Location *</Label>
+                    <Label className="text-[#3C2317] mb-2 block font-medium">Location *</Label>
                     {locationMessage && (
-                      <div className="mb-2 sm:mb-3 p-3 sm:p-4 bg-amber-50 border-l-4 border-amber-400 rounded-lg">
-                        <p className="text-xs sm:text-sm text-amber-800 flex items-center font-medium">
-                          <Shield className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                      <div className="mb-2 p-3 bg-amber-50 border-l-4 border-amber-400 rounded-lg">
+                        <p className="text-xs text-amber-800 flex items-center font-medium">
+                          <Shield className="w-3 h-3 mr-1" />
                           {locationMessage}
                         </p>
                         {dateConstraints.lockedLocation && (
@@ -889,7 +881,7 @@ export default function BookingPage() {
                       }}
                       disabled={checkingConstraints}
                     >
-                      <SelectTrigger className="border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-12 sm:h-14 rounded-xl">
+                      <SelectTrigger className="border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-10 sm:h-12 rounded-xl">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -926,23 +918,21 @@ export default function BookingPage() {
                   </div>
 
                   <div>
-                    <Label className="text-[#3C2317] mb-2 sm:mb-3 block font-medium">Number of Tents *</Label>
-                    <div className="flex items-center justify-center space-x-4 sm:space-x-6">
+                    <Label className="text-[#3C2317] mb-2 block font-medium">Number of Tents *</Label>
+                    <div className="flex items-center justify-center space-x-4">
                       <Button
                         type="button"
                         variant="outline"
                         size="lg"
                         onClick={() => handleTentChange(false)}
                         disabled={formData.numberOfTents <= 1}
-                        className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#3C2317]/5 transition-all duration-300 h-10 w-10 sm:h-12 sm:w-12 rounded-xl"
+                        className="border-2 border-[#D3B88C] hover:border-[#3C2317] cursor-pointer hover:bg-[#D3B88C] transition-all duration-300 h-10 w-10 rounded-xl"
                       >
-                        <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <Minus className="h-4 w-4" />
                       </Button>
                       <div className="text-center">
-                        <div className="text-2xl sm:text-3xl font-bold text-[#3C2317] mb-1">
-                          {formData.numberOfTents}
-                        </div>
-                        <div className="text-xs sm:text-sm text-[#3C2317]/70">
+                        <div className="text-2xl font-bold text-[#3C2317] mb-1">{formData.numberOfTents}</div>
+                        <div className="text-xs text-[#3C2317]/70">
                           {formData.numberOfTents === 1 ? "tent" : "tents"}
                         </div>
                       </div>
@@ -952,19 +942,19 @@ export default function BookingPage() {
                         size="lg"
                         onClick={() => handleTentChange(true)}
                         disabled={formData.numberOfTents >= 5}
-                        className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#3C2317]/5 transition-all duration-300 h-10 w-10 sm:h-12 sm:w-12 rounded-xl"
+                        className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#D3B88C] cursor-pointer transition-all duration-300 h-10 w-10 rounded-xl"
                       >
-                        <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <Plus className="h-4 w-4" />
                       </Button>
                     </div>
                     {errors.numberOfTents && touched.numberOfTents && (
-                      <p className="text-sm text-red-600 mt-2 sm:mt-3 flex items-center justify-center space-x-1 sm:space-x-2">
-                        <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <p className="text-sm text-red-600 mt-2 flex items-center justify-center space-x-1">
+                        <X className="w-3 h-3" />
                         <span>{errors.numberOfTents}</span>
                       </p>
                     )}
                     {formData.numberOfTents >= 5 && (
-                      <p className="text-xs sm:text-sm text-[#3C2317]/80 mt-2 sm:mt-3 text-center">
+                      <p className="text-xs text-[#3C2317]/80 mt-2 text-center">
                         Maximum 5 tents per booking. For more tents, please contact us directly
                       </p>
                     )}
@@ -972,96 +962,93 @@ export default function BookingPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
-                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
-                  <CardTitle className="text-[#3C2317] text-lg sm:text-xl">Premium Add-ons</CardTitle>
+              <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+                  <CardTitle className="text-[#3C2317] text-lg">Premium Add-ons</CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 sm:p-6 space-y-2 sm:space-y-3">
+                <CardContent className="p-4 space-y-1">
                   <div className="grid gap-1">
                     {/* Charcoal Add-on */}
-                    <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30">
+                    <div className="flex items-start space-x-3 p-3 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30">
                       <Checkbox
                         id="charcoal"
                         checked={formData.addOns.charcoal}
                         onCheckedChange={(checked) => handleAddOnChange("charcoal", checked as boolean)}
-                        className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 sm:h-5 sm:w-5 mt-0.5 sm:mt-1 flex-shrink-0"
+                        className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 mt-0.5 flex-shrink-0 cursor-pointer"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start mb-1">
-                          <Label htmlFor="charcoal" className="text-[#3C2317] font-medium text-sm sm:text-base cursor-pointer">
+                          <Label htmlFor="charcoal" className="text-[#3C2317] font-medium text-sm cursor-pointer">
                             Premium Charcoal
                           </Label>
-                          <span className="text-[#3C2317] font-bold text-sm sm:text-base whitespace-nowrap ml-2 sm:ml-3">
+                          <span className="text-[#3C2317] font-bold text-sm whitespace-nowrap ml-2">
                             AED {settings?.addOnPrices?.charcoal || 60}
                           </span>
                         </div>
-                        <p className="text-xs sm:text-sm text-[#3C2317]/80 mt-1">High-quality charcoal for perfect grilling</p>
+                        <p className="text-xs text-[#3C2317]/80 mt-1">High-quality charcoal for perfect grilling</p>
                       </div>
                     </div>
 
                     {/* Firewood Add-on */}
-                    <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30">
+                    <div className="flex items-start space-x-3 p-3 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30">
                       <Checkbox
                         id="firewood"
                         checked={formData.addOns.firewood}
                         onCheckedChange={(checked) => handleAddOnChange("firewood", checked as boolean)}
-                        className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 sm:h-5 sm:w-5 mt-0.5 sm:mt-1 flex-shrink-0"
+                        className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 mt-0.5 flex-shrink-0 cursor-pointer"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start mb-1">
-                          <Label htmlFor="firewood" className="text-[#3C2317] font-medium text-sm sm:text-base cursor-pointer">
+                          <Label htmlFor="firewood" className="text-[#3C2317] font-medium text-sm cursor-pointer">
                             Premium Firewood
                           </Label>
-                          <span className="text-[#3C2317] font-bold text-sm sm:text-base whitespace-nowrap ml-2 sm:ml-3">
+                          <span className="text-[#3C2317] font-bold text-sm whitespace-nowrap ml-2">
                             AED {settings?.addOnPrices?.firewood || 75}
                           </span>
                         </div>
-                        <p className="text-xs sm:text-sm text-[#3C2317]/80 mt-1">Seasoned wood for cozy campfires</p>
+                        <p className="text-xs text-[#3C2317]/80 mt-1">Seasoned wood for cozy campfires</p>
                       </div>
                     </div>
 
                     {/* Portable Toilet Add-on */}
-                    <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30">
+                    <div className="flex items-start space-x-3 p-3 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30">
                       <Checkbox
                         id="portableToilet"
                         checked={formData.addOns.portableToilet}
                         onCheckedChange={(checked) => handleAddOnChange("portableToilet", checked as boolean)}
-                        className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 sm:h-5 sm:w-5 mt-0.5 sm:mt-1 flex-shrink-0"
+                        className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 mt-0.5 flex-shrink-0 cursor-pointer"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start mb-1">
-                          <Label
-                            htmlFor="portableToilet"
-                            className="text-[#3C2317] font-medium text-sm sm:text-base cursor-pointer"
-                          >
+                          <Label htmlFor="portableToilet" className="text-[#3C2317] font-medium text-sm cursor-pointer">
                             Luxury Portable Toilet
                           </Label>
-                          <span className="text-[#3C2317] font-bold text-sm sm:text-base whitespace-nowrap ml-2 sm:ml-3">
+                          <span className="text-[#3C2317] font-bold text-sm whitespace-nowrap ml-2">
                             {formData.hasChildren
                               ? "FREE with children"
                               : `AED ${settings?.addOnPrices?.portableToilet || 200}`}
                           </span>
                         </div>
-                        <p className="text-xs sm:text-sm text-[#3C2317]/80 mt-1">Private, clean facilities for your comfort</p>
+                        <p className="text-xs text-[#3C2317]/80 mt-1">Private, clean facilities for your comfort</p>
                       </div>
                     </div>
 
                     {/* Children Option */}
-                    <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30">
+                    <div className="flex items-start space-x-3 p-3 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30">
                       <Checkbox
                         id="hasChildren"
                         checked={formData.hasChildren}
                         onCheckedChange={(checked) => handleInputChange("hasChildren", checked as boolean)}
-                        className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 sm:h-5 sm:w-5 mt-0.5 sm:mt-1 flex-shrink-0"
+                        className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 mt-0.5 flex-shrink-0 cursor-pointer"
                       />
                       <div className="flex-1 min-w-0">
                         <Label
                           htmlFor="hasChildren"
-                          className="text-[#3C2317] font-medium text-sm sm:text-base cursor-pointer block mb-1"
+                          className="text-[#3C2317] font-medium text-sm cursor-pointer block mb-1"
                         >
                           Children in group
                         </Label>
-                        <p className="text-xs sm:text-sm text-[#3C2317]/80">Makes portable toilet complimentary</p>
+                        <p className="text-xs text-[#3C2317]/80">Makes portable toilet complimentary</p>
                       </div>
                     </div>
                   </div>
@@ -1069,9 +1056,9 @@ export default function BookingPage() {
               </Card>
 
               {settings?.customAddOns && settings.customAddOns.length > 0 && (
-                <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
-                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
-                    <CardTitle className="text-[#3C2317] flex items-center justify-between text-lg sm:text-xl">
+                <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm">
+                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+                    <CardTitle className="text-[#3C2317] flex items-center justify-between text-lg">
                       <span>Exclusive Services</span>
                       <Button
                         type="button"
@@ -1079,37 +1066,37 @@ export default function BookingPage() {
                         size="sm"
                         onClick={handleManualRefresh}
                         disabled={loadingSettings}
-                        className="text-[#3C2317] hover:text-[#3C2317]/80 hover:bg-[#3C2317]/10 p-1 sm:p-2"
+                        className="text-[#3C2317] hover:text-[#3C2317]/80 hover:bg-[#3C2317]/10 p-1"
                       >
-                        {loadingSettings ? <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" /> : "Refresh"}
+                        {loadingSettings ? <Loader2 className="w-3 h-3 animate-spin" /> : "Refresh"}
                       </Button>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-4 sm:p-6 space-y-2 sm:space-y-3">
+                  <CardContent className="p-4 space-y-1">
                     {settings.customAddOns.map((addon) => (
                       <div
                         key={addon.id}
-                        className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30"
+                        className="flex items-start space-x-3 p-3 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30"
                       >
                         <Checkbox
                           id={`custom-${addon.id}`}
                           checked={selectedCustomAddOns.includes(addon.id)}
                           onCheckedChange={(checked) => handleCustomAddOnChange(addon.id, checked as boolean)}
-                          className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 sm:h-5 sm:w-5 mt-0.5 sm:mt-1 flex-shrink-0"
+                          className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 mt-0.5 flex-shrink-0 cursor-pointer"
                         />
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start mb-1">
                             <Label
                               htmlFor={`custom-${addon.id}`}
-                              className="text-[#3C2317] font-medium text-sm sm:text-base cursor-pointer"
+                              className="text-[#3C2317] font-medium text-sm cursor-pointer"
                             >
                               {addon.name}
                             </Label>
-                            <span className="text-[#3C2317] font-bold text-sm sm:text-base whitespace-nowrap ml-2 sm:ml-3">
+                            <span className="text-[#3C2317] font-bold text-sm whitespace-nowrap ml-2">
                               AED {addon.price}
                             </span>
                           </div>
-                          {addon.description && <p className="text-xs sm:text-sm text-[#3C2317]/80 mt-1">{addon.description}</p>}
+                          {addon.description && <p className="text-xs text-[#3C2317]/80 mt-1">{addon.description}</p>}
                         </div>
                       </div>
                     ))}
@@ -1117,12 +1104,12 @@ export default function BookingPage() {
                 </Card>
               )}
 
-              <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
-                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
-                  <CardTitle className="text-[#3C2317] text-lg sm:text-xl">Special Requests</CardTitle>
+              <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+                  <CardTitle className="text-[#3C2317] text-lg">Special Requests</CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 sm:p-6 md:p-8">
-                  <Label htmlFor="notes" className="text-[#3C2317] mb-2 sm:mb-3 block font-medium">
+                <CardContent className="p-4 sm:p-6">
+                  <Label htmlFor="notes" className="text-[#3C2317] mb-2 block font-medium">
                     Additional Notes
                   </Label>
                   <Textarea
@@ -1131,162 +1118,117 @@ export default function BookingPage() {
                     value={formData.notes}
                     onChange={(e) => handleInputChange("notes", e.target.value)}
                     rows={3}
-                    className="border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 rounded-xl resize-none text-sm sm:text-base"
+                    className="border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 rounded-xl resize-none text-sm"
                   />
                 </CardContent>
               </Card>
 
-              <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
-                <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9] !py-0">
-                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C] h-12 sm:h-14 py-3 sm:py-4">
-                    <CardTitle className="text-[#3C2317] flex items-center text-lg sm:text-xl">
-                      <Check className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+              <div className="grid md:grid-cols-2 gap-3 sm:gap-4">
+                <Card className="border-[#D3B88C]/50 shadow-lg bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9]">
+                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C] py-3">
+                    <CardTitle className="text-[#3C2317] flex items-center text-lg">
+                      <Check className="w-4 h-4 mr-2" />
                       Premium Inclusions
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-4 sm:p-6 md:p-8">
-                    <ul className="space-y-2 sm:space-y-3 text-[#3C2317] text-sm sm:text-base">
-                      <li className="flex items-start space-x-2 sm:space-x-3">
-                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                  <CardContent className="p-4">
+                    <ul className="space-y-2 text-[#3C2317] text-sm">
+                      <li className="flex items-start space-x-2">
+                        <Check className="w-4 h-4 mt-0.5 text-[#3C2317] flex-shrink-0" />
                         <span>Luxury tent setup for up to 4 persons</span>
                       </li>
-                      <li className="flex items-start space-x-2 sm:space-x-3">
-                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                      <li className="flex items-start space-x-2">
+                        <Check className="w-4 h-4 mt-0.5 text-[#3C2317] flex-shrink-0" />
                         <span>Premium bedding & sleeping pillows</span>
                       </li>
-                      <li className="flex items-start space-x-2 sm:space-x-3">
-                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                      <li className="flex items-start space-x-2">
+                        <Check className="w-4 h-4 mt-0.5 text-[#3C2317] flex-shrink-0" />
                         <span>Winter bedding set & blankets</span>
                       </li>
-                      <li className="flex items-start space-x-2 sm:space-x-3">
-                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                      <li className="flex items-start space-x-2">
+                        <Check className="w-4 h-4 mt-0.5 text-[#3C2317] flex-shrink-0" />
                         <span>Professional fire pit setup</span>
                       </li>
-                      <li className="flex items-start space-x-2 sm:space-x-3">
-                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                      <li className="flex items-start space-x-2">
+                        <Check className="w-4 h-4 mt-0.5 text-[#3C2317] flex-shrink-0" />
                         <span>Safety equipment & fire extinguisher</span>
                       </li>
-                      <li className="flex items-start space-x-2 sm:space-x-3">
-                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                      <li className="flex items-start space-x-2">
+                        <Check className="w-4 h-4 mt-0.5 text-[#3C2317] flex-shrink-0" />
                         <span>Comfortable foldable furniture</span>
                       </li>
-                      <li className="flex items-start space-x-2 sm:space-x-3">
-                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                      <li className="flex items-start space-x-2">
+                        <Check className="w-4 h-4 mt-0.5 text-[#3C2317] flex-shrink-0" />
                         <span>Complete cooking equipment & utensils</span>
                       </li>
-                      <li className="flex items-start space-x-2 sm:space-x-3">
-                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                      <li className="flex items-start space-x-2">
+                        <Check className="w-4 h-4 mt-0.5 text-[#3C2317] flex-shrink-0" />
                         <span>Ambient lighting & power solutions</span>
                       </li>
                     </ul>
                   </CardContent>
                 </Card>
 
-                <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9] !py-0">
-                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C] h-12 sm:h-14 py-3 sm:py-4">
-                    <CardTitle className="text-[#3C2317] flex items-center text-lg sm:text-xl">
-                      <X className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                <Card className="border-[#D3B88C]/50 shadow-lg bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9]">
+                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C] py-3">
+                    <CardTitle className="text-[#3C2317] flex items-center text-lg">
+                      <X className="w-4 h-4 mr-2" />
                       Not Included
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-4 sm:p-6 md:p-8">
-                    <ul className="space-y-2 sm:space-y-3 text-[#3C2317] text-sm sm:text-base">
-                      <li className="flex items-start space-x-2 sm:space-x-3">
-                        <X className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                  <CardContent className="p-4">
+                    <ul className="space-y-2 text-[#3C2317] text-sm">
+                      <li className="flex items-start space-x-2">
+                        <X className="w-4 h-4 mt-0.5 text-[#3C2317] flex-shrink-0" />
                         <span>Food & beverages (bring your favorites)</span>
                       </li>
-                      <li className="flex items-start space-x-2 sm:space-x-3">
-                        <X className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                      <li className="flex items-start space-x-2">
+                        <X className="w-4 h-4 mt-0.5 text-[#3C2317] flex-shrink-0" />
                         <span>Fuel & charcoal (available as add-ons)</span>
                       </li>
-                      <li className="flex items-start space-x-2 sm:space-x-3">
-                        <X className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                      <li className="flex items-start space-x-2">
+                        <X className="w-4 h-4 mt-0.5 text-[#3C2317] flex-shrink-0" />
                         <span>Personal toiletries & towels</span>
                       </li>
-                      <li className="flex items-start space-x-2 sm:space-x-3">
-                        <X className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                      <li className="flex items-start space-x-2">
+                        <X className="w-4 h-4 mt-0.5 text-[#3C2317] flex-shrink-0" />
                         <span>Transportation to location</span>
                       </li>
                     </ul>
-                    <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-[#E6CFA9] rounded-xl">
-                      <p className="text-xs sm:text-sm text-[#3C2317] font-medium">
+                    <div className="mt-4 p-3 bg-[#E6CFA9] rounded-xl">
+                      <p className="text-xs text-[#3C2317] font-medium">
                         💡 Pro Tip: We welcome you to bring your own food and drinks for a personalized experience!
                       </p>
                     </div>
                   </CardContent>
                 </Card>
               </div>
-
-              {/* <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
-                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
-                  <CardTitle className="text-[#3C2317] text-lg sm:text-xl">Important Information</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 text-[#3C2317]">
-                  <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
-                    <div className="space-y-3 sm:space-y-4">
-                      <div>
-                        <h4 className="font-bold mb-2 sm:mb-3 text-[#3C2317] text-sm sm:text-base">📍 Location & Access</h4>
-                        <p className="text-[#3C2317]/80 leading-relaxed text-xs sm:text-sm">
-                          Our premium locations require 4x4 access. We provide secure parking and guided transport to
-                          your camping site for the ultimate adventure experience.
-                        </p>
-                      </div>
-
-                      <div>
-                        <h4 className="font-bold mb-2 sm:mb-3 text-[#3C2317] text-sm sm:text-base">🎯 Meeting Point</h4>
-                        <p className="text-[#3C2317]/80 leading-relaxed text-xs sm:text-sm">
-                          Detailed meeting point and timing will be sent via email after booking confirmation. Our
-                          professional guides will escort you to your luxury setup.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3 sm:space-y-4">
-                      <div>
-                        <h4 className="font-bold mb-2 sm:mb-3 text-[#3C2317] text-sm sm:text-base">👕 What to Bring</h4>
-                        <p className="text-[#3C2317]/80 leading-relaxed text-xs sm:text-sm">
-                          Warm clothing for evening temperatures, comfortable footwear, and personal items. Desert
-                          nights can be surprisingly cool!
-                        </p>
-                      </div>
-
-                      <div>
-                        <h4 className="font-bold mb-2 sm:mb-3 text-[#3C2317] text-sm sm:text-base">🐕 Pet Policy</h4>
-                        <p className="text-[#3C2317]/80 leading-relaxed text-xs sm:text-sm">
-                          Well-behaved pets are welcome! Please bring their food and ensure they won't disturb the
-                          peaceful camping atmosphere.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card> */}
             </form>
           </div>
 
           <div className="lg:col-span-1">
-            <Card className="sticky top-20 sm:top-24 border-[#D3B88C]/50 shadow-xl sm:shadow-2xl bg-[#FBF9D9]/90 backdrop-blur-md overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-[#3C2317] to-[#5D4037] text-[#FBF9D9] p-4 sm:p-6 md:p-8">
-                <CardTitle className="text-xl sm:text-2xl font-bold">Booking Summary</CardTitle>
-                <p className="text-[#FBF9D9]/90 text-sm sm:text-base">Your luxury camping experience</p>
+            <Card className="sticky top-16 sm:top-20 border-[#D3B88C]/50 shadow-xl bg-[#FBF9D9]/90 backdrop-blur-md overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-[#3C2317] to-[#5D4037] text-[#FBF9D9] p-4 sm:p-6">
+                <CardTitle className="text-xl font-bold">Booking Summary</CardTitle>
+                <p className="text-[#FBF9D9]/90 text-sm">Your luxury camping experience</p>
               </CardHeader>
-              <CardContent className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
-                <div className="space-y-3 sm:space-y-4">
-                  <div className="flex justify-between items-center p-3 sm:p-4 bg-[#E6CFA9]/30 rounded-xl">
-                    <span className="text-[#3C2317] font-medium text-sm sm:text-base">
+              <CardContent className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-[#E6CFA9]/30 rounded-xl">
+                    <span className="text-[#3C2317] font-medium text-sm">
                       {formData.numberOfTents} Tent{formData.numberOfTents > 1 ? "s" : ""} ({formData.location})
                     </span>
-                    <span className="font-bold text-[#3C2317] text-sm sm:text-base">AED {pricing.tentPrice.toFixed(2)}</span>
+                    <span className="font-bold text-[#3C2317] text-sm">AED {pricing.tentPrice.toFixed(2)}</span>
                   </div>
 
                   {formData.location === "Wadi" && formData.numberOfTents < 2 && (
-                    <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                    <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                       <div className="flex items-center space-x-2">
-                        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-amber-100 rounded-full flex items-center justify-center">
-                          <span className="text-amber-600 text-xs sm:text-sm font-bold">!</span>
+                        <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center">
+                          <span className="text-amber-600 text-xs font-bold">!</span>
                         </div>
                         <div>
-                          <p className="text-amber-800 font-medium text-xs sm:text-sm">Wadi Location Requirement</p>
+                          <p className="text-amber-800 font-medium text-xs">Wadi Location Requirement</p>
                           <p className="text-amber-700 text-xs">
                             Minimum 2 tents required for Wadi bookings due to logistics
                           </p>
@@ -1296,39 +1238,39 @@ export default function BookingPage() {
                   )}
 
                   {formData.location === "Wadi" && (
-                    <div className="flex justify-between text-xs sm:text-sm p-2 sm:p-3 bg-[#E6CFA9]/20 rounded-lg">
+                    <div className="flex justify-between text-xs p-2 bg-[#E6CFA9]/20 rounded-lg">
                       <span className="text-[#3C2317]/80">Wadi Premium Surcharge</span>
                       <span className="text-[#3C2317] font-medium">AED {pricing.locationSurcharge.toFixed(2)}</span>
                     </div>
                   )}
 
                   {pricing.addOnsCost > 0 && (
-                    <div className="flex justify-between text-xs sm:text-sm p-2 sm:p-3 bg-[#E6CFA9]/20 rounded-lg">
+                    <div className="flex justify-between text-xs p-2 bg-[#E6CFA9]/20 rounded-lg">
                       <span className="text-[#3C2317]/80">Premium Add-ons</span>
                       <span className="text-[#3C2317] font-medium">AED {pricing.addOnsCost.toFixed(2)}</span>
                     </div>
                   )}
 
                   {pricing.customAddOnsCost > 0 && (
-                    <div className="flex justify-between text-xs sm:text-sm p-2 sm:p-3 bg-[#E6CFA9]/20 rounded-lg">
+                    <div className="flex justify-between text-xs p-2 bg-[#E6CFA9]/20 rounded-lg">
                       <span className="text-[#3C2317]/80">Exclusive Services</span>
                       <span className="text-[#3C2317] font-medium">AED {pricing.customAddOnsCost.toFixed(2)}</span>
                     </div>
                   )}
 
-                  <div className="border-t border-[#D3B88C] pt-3 sm:pt-4 space-y-2 sm:space-y-3">
+                  <div className="border-t border-[#D3B88C] pt-3 space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-[#3C2317] font-medium text-sm sm:text-base">Subtotal</span>
-                      <span className="text-[#3C2317] font-bold text-sm sm:text-base">AED {pricing.subtotal.toFixed(2)}</span>
+                      <span className="text-[#3C2317] font-medium text-sm">Subtotal</span>
+                      <span className="text-[#3C2317] font-bold text-sm">AED {pricing.subtotal.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between text-xs sm:text-sm">
+                    <div className="flex justify-between text-xs">
                       <span className="text-[#3C2317]/80">VAT ({((settings?.vatRate || 0.05) * 100).toFixed(0)}%)</span>
                       <span className="text-[#3C2317] font-medium">AED {pricing.vat.toFixed(2)}</span>
                     </div>
                   </div>
 
-                  <div className="border-t-2 border-[#3C2317]/20 pt-3 sm:pt-4">
-                    <div className="flex justify-between text-lg sm:text-xl md:text-2xl font-bold p-3 sm:p-4 bg-gradient-to-r from-[#3C2317]/10 to-[#5D4037]/10 rounded-xl">
+                  <div className="border-t-2 border-[#3C2317]/20 pt-3">
+                    <div className="flex justify-between text-lg font-bold p-3 bg-gradient-to-r from-[#3C2317]/10 to-[#5D4037]/10 rounded-xl">
                       <span className="text-[#3C2317]">Total</span>
                       <span className="text-[#3C2317]">AED {pricing.total.toFixed(2)}</span>
                     </div>
@@ -1337,18 +1279,18 @@ export default function BookingPage() {
                   <Button
                     onClick={handleSubmit}
                     type="submit"
-                    className="w-full bg-gradient-to-r from-[#3C2317] to-[#5D4037] hover:from-[#3C2317]/90 hover:to-[#5D4037]/90 text-[#FBF9D9] font-bold py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
+                    className="w-full bg-gradient-to-r from-[#3C2317] to-[#5D4037] hover:from-[#3C2317]/90 hover:to-[#5D4037]/90 text-[#FBF9D9] font-bold py-3 text-base shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
                     size="lg"
                     disabled={isLoading}
                   >
                     {isLoading ? (
-                      <div className="flex items-center space-x-3">
-                        <Loader2 className="w-5 h-5 animate-spin" />
+                      <div className="flex items-center space-x-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
                         <span>Processing...</span>
                       </div>
                     ) : (
-                      <div className="flex items-center space-x-3">
-                        <Shield className="w-5 h-5" />
+                      <div className="flex items-center space-x-2">
+                        <Shield className="w-4 h-4" />
                         <span>Reserve Your Adventure</span>
                       </div>
                     )}
@@ -1356,14 +1298,14 @@ export default function BookingPage() {
                 </div>
 
                 <div className="text-center">
-                  <p className="text-xs text-[#3C2317]/80 mb-4">
+                  <p className="text-xs text-[#3C2317]/80 mb-3">
                     🔒 Secure payment powered by Stripe. You will be redirected to complete your payment safely.
                   </p>
                 </div>
 
-                <div className="bg-gradient-to-r from-[#E6CFA9]/50 to-[#D3B88C]/20 p-6 rounded-xl border border-[#3C2317]/10">
-                  <h4 className="font-bold text-[#3C2317] mb-4 text-lg">💰 Pricing Guide</h4>
-                  <ul className="text-sm text-[#3C2317]/80 space-y-2">
+                <div className="bg-gradient-to-r from-[#E6CFA9]/50 to-[#D3B88C]/20 p-4 rounded-xl border border-[#3C2317]/10">
+                  <h4 className="font-bold text-[#3C2317] mb-3 text-base">💰 Pricing Guide</h4>
+                  <ul className="text-sm text-[#3C2317]/80 space-y-1">
                     <li className="flex justify-between">
                       <span>Single tent:</span>
                       <span className="font-medium">AED {settings?.tentPrices?.singleTent || 1497} + VAT</span>
