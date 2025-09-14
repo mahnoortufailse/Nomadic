@@ -492,7 +492,7 @@ export default function BookingPage() {
 
       // Dismiss loading toast and show success
       toast.dismiss(loadingToast)
-      toast.success("Booking created successfully!")
+      
 
       // Add a small delay to show the success message
       setTimeout(() => {
@@ -676,8 +676,8 @@ export default function BookingPage() {
 
         <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-            <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 animate-scale-in bg-[#FBF9D9]/80 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+            <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 animate-scale-in bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+              <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 py-3">
                 <CardTitle className="text-[#3C2317] flex items-center space-x-2 text-lg">
                   <Users className="w-5 h-5 text-[#3C2317]" />
                   <span>Who's joining the adventure?</span>
@@ -718,8 +718,8 @@ export default function BookingPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+            <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+              <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50  h-12 py-3">
                 <CardTitle className="text-[#3C2317] flex items-center space-x-2 text-lg">
                   <Calendar className="w-5 h-5 text-[#3C2317]" />
                   <span>Choose your perfect date</span>
@@ -764,8 +764,8 @@ export default function BookingPage() {
             </Card>
 
             <form className="space-y-4 sm:space-y-6">
-              <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm">
-                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+              <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50  h-12 py-3">
                   <CardTitle className="text-[#3C2317] text-lg">Personal Information</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6 space-y-4">
@@ -841,8 +841,8 @@ export default function BookingPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm">
-                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+              <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50  h-12 py-3">
                   <CardTitle className="text-[#3C2317] text-lg">Booking Details</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6 space-y-4">
@@ -963,8 +963,8 @@ export default function BookingPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm">
-                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+              <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50  h-12 py-3">
                   <CardTitle className="text-[#3C2317] text-lg">Premium Add-ons</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 space-y-1">
@@ -1057,8 +1057,8 @@ export default function BookingPage() {
               </Card>
 
               {settings?.customAddOns && settings.customAddOns.length > 0 && (
-                <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm">
-                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+                <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50  h-12 py-3">
                     <CardTitle className="text-[#3C2317] flex items-center justify-between text-lg">
                       <span>Exclusive Services</span>
                       <Button
@@ -1105,8 +1105,8 @@ export default function BookingPage() {
                 </Card>
               )}
 
-              <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm">
-                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 py-3">
+              <Card className="border-[#D3B88C]/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50  h-12 py-3">
                   <CardTitle className="text-[#3C2317] text-lg">Special Requests</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6">
@@ -1125,8 +1125,8 @@ export default function BookingPage() {
               </Card>
 
               <div className="grid md:grid-cols-2 gap-3 sm:gap-4">
-                <Card className="border-[#D3B88C]/50 shadow-lg bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9]">
-                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C] py-3">
+                <Card className="border-[#D3B88C]/50 shadow-lg bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9] !py-0">
+                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]  h-12 py-3">
                     <CardTitle className="text-[#3C2317] flex items-center text-lg">
                       <Check className="w-4 h-4 mr-2" />
                       Premium Inclusions
@@ -1170,8 +1170,8 @@ export default function BookingPage() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-[#D3B88C]/50 shadow-lg bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9]">
-                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C] py-3">
+                <Card className="border-[#D3B88C]/50 shadow-lg bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9] !py-0">
+                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]  h-12 py-3">
                     <CardTitle className="text-[#3C2317] flex items-center text-lg">
                       <X className="w-4 h-4 mr-2" />
                       Not Included
@@ -1208,7 +1208,7 @@ export default function BookingPage() {
           </div>
 
           <div className="lg:col-span-1">
-            <Card className="sticky top-16 sm:top-20 border-[#D3B88C]/50 shadow-xl bg-[#FBF9D9]/90 backdrop-blur-md overflow-hidden">
+            <Card className="sticky top-16 sm:top-20 border-[#D3B88C]/50 shadow-xl bg-[#FBF9D9]/90 backdrop-blur-md overflow-hidden !py-0">
               <CardHeader className="bg-gradient-to-r from-[#3C2317] to-[#5D4037] text-[#FBF9D9] p-4 sm:p-6">
                 <CardTitle className="text-xl font-bold">Booking Summary</CardTitle>
                 <p className="text-[#FBF9D9]/90 text-sm">Your luxury camping experience</p>
