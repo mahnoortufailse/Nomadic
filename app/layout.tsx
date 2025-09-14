@@ -8,7 +8,7 @@ import { Toaster } from "react-hot-toast";
 import localFont from "next/font/local";
 
 const robotoFont = localFont({
-  src: "/Roboto.ttf", // ✅ correct path for public folder
+  src: "./Roboto.ttf", // ✅ correct path for public folder
   variable: "--font-roboto", // ✅ creates a CSS variable
 });
 
@@ -22,11 +22,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${robotoFont.variable} ${GeistSans.variable} ${GeistMono.variable}`}
-    >
-      <body className="antialiased font-roboto">
+    <html lang="en">
+      <body className={`antialiased ${robotoFont.className}`}>
         <Toaster position="top-right" reverseOrder={false} />
         <Providers>{children}</Providers>
         <Analytics />
