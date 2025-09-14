@@ -45,3 +45,22 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const db = await getDatabase()
+
+    const result = await db.collection("bookings").deleteOne({
+      _id: new ObjectId(params.id),
+    })
+
+    if (result.deletedCount === 0) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 })
+    }
+
+    return NextResponse.json({ success: true, message: "Booking deleted successfully" })
+  } catch (error) {
+    console.error("Error deleting booking:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}

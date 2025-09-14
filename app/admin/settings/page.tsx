@@ -95,11 +95,30 @@ export default function AdminSettingsPage() {
     toast.success("Custom add-on added successfully")
   }
 
-  const removeCustomAddOn = (id: string) => {
-    const customAddOns = settings?.customAddOns || []
-    const updatedAddOns = customAddOns.filter((addon: any) => addon.id !== id)
-    updateSettings("customAddOns", updatedAddOns)
-    toast.success("Custom add-on removed")
+  const removeCustomAddOn = async (id: string) => {
+    try {
+      const customAddOns = settings?.customAddOns || []
+      const updatedAddOns = customAddOns.filter((addon: any) => addon.id !== id)
+
+      // Update settings in database immediately
+      const response = await fetch("/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customAddOns: updatedAddOns }),
+      })
+
+      if (response.ok) {
+        updateSettings("customAddOns", updatedAddOns)
+        toast.success("Custom add-on deleted successfully")
+        // Refresh settings to ensure consistency
+        await fetchSettings()
+      } else {
+        toast.error("Failed to delete custom add-on")
+      }
+    } catch (error) {
+      console.error("Error deleting custom add-on:", error)
+      toast.error("Failed to delete custom add-on")
+    }
   }
 
   if (loading) {
@@ -123,33 +142,35 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <div className="max-w-6xl mx-auto p-6">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
               <Link
                 href="/admin/dashboard"
-                className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
+                className="flex items-center space-x-2 text-[#3C2317]/60 hover:text-[#3C2317] transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Dashboard</span>
               </Link>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                <Tent className="w-4 h-4 text-primary-foreground" />
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-xl flex items-center justify-center shadow-lg">
+                <Tent className="w-5 h-5 text-[#FBF9D9]" />
               </div>
-              <span className="text-2xl font-bold text-foreground">NOMADIC</span>
+              <span className="text-lg font-bold text-[#3C2317]">NOMADIC</span>
             </div>
           </div>
 
           <div className="flex items-center mb-4">
-            <SettingsIcon className="w-8 h-8 text-primary mr-3" />
+            <div className="w-12 h-12 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-xl flex items-center justify-center mr-4 shadow-lg">
+              <SettingsIcon className="w-6 h-6 text-[#FBF9D9]" />
+            </div>
             <div>
-              <h1 className="text-4xl font-bold text-foreground">System Settings</h1>
-              <p className="text-xl text-muted-foreground mt-2">
+              <h1 className="text-2xl font-bold text-[#3C2317]">System Settings</h1>
+              <p className="text-base text-[#3C2317]/80 mt-2">
                 Manage pricing, add-ons, and business rules for your glamping service
               </p>
             </div>
@@ -158,19 +179,19 @@ export default function AdminSettingsPage() {
 
         <div className="space-y-8">
           {/* Tent Pricing */}
-          <Card className="bg-card border-border shadow-sm">
-            <CardHeader className="">
-              <CardTitle className="flex items-center text-card-foreground">
-                <Tent className="w-5 h-4 mr-2 text-primary " />
+          <Card className="bg-[#FBF9D9]/80 backdrop-blur-sm border-[#D3B88C]/50 shadow-xl">
+            <CardHeader className="border-b border-[#D3B88C]/50">
+              <CardTitle className="text-[#3C2317] text-lg font-semibold flex items-center">
+                <Tent className="w-5 h-5 mr-2 text-[#D3B88C]" />
                 Tent Pricing Configuration
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <Label htmlFor="singleTent" className="text-card-foreground font-medium flex items-center">
+                  <Label htmlFor="singleTent" className="text-[#3C2317] font-medium flex items-center">
                     Single Tent Price (AED)
-                    <Badge variant="outline" className="ml-2 text-xs">
+                    <Badge variant="outline" className="ml-2 text-xs border-[#D3B88C] text-[#3C2317]">
                       Base Price
                     </Badge>
                   </Label>
@@ -179,17 +200,15 @@ export default function AdminSettingsPage() {
                     type="number"
                     value={settings?.tentPrices?.singleTent || 1497}
                     onChange={(e) => updateSettings("tentPrices.singleTent", Number(e.target.value))}
-                    className="border-border focus:border-primary focus:ring-primary/20"
+                    className="border-[#D3B88C] focus:border-[#3C2317] focus:ring-[#3C2317]/20 bg-white/50"
                   />
-                  <p className="text-sm text-muted-foreground">
-                    Standard price for booking a single tent (up to 4 people)
-                  </p>
+                  <p className="text-sm text-[#3C2317]/60">Standard price for booking a single tent (up to 4 people)</p>
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="multipleTents" className="text-card-foreground font-medium flex items-center">
+                  <Label htmlFor="multipleTents" className="text-[#3C2317] font-medium flex items-center">
                     Multiple Tents Price (AED each)
-                    <Badge variant="outline" className="ml-2 text-xs">
+                    <Badge variant="outline" className="ml-2 text-xs border-[#D3B88C] text-[#3C2317]">
                       Bulk Discount
                     </Badge>
                   </Label>
@@ -198,17 +217,15 @@ export default function AdminSettingsPage() {
                     type="number"
                     value={settings?.tentPrices?.multipleTents || 1297}
                     onChange={(e) => updateSettings("tentPrices.multipleTents", Number(e.target.value))}
-                    className="border-border focus:border-primary focus:ring-primary/20"
+                    className="border-[#D3B88C] focus:border-[#3C2317] focus:ring-[#3C2317]/20 bg-white/50"
                   />
-                  <p className="text-sm text-muted-foreground">
-                    Discounted price per tent when booking 2 or more tents
-                  </p>
+                  <p className="text-sm text-[#3C2317]/60">Discounted price per tent when booking 2 or more tents</p>
                 </div>
               </div>
 
-              <div className="bg-muted/30 p-4 rounded-lg">
-                <h4 className="font-medium text-card-foreground mb-2">Pricing Rules</h4>
-                <ul className="text-sm text-muted-foreground space-y-1">
+              <div className="bg-[#E6CFA9]/30 p-4 rounded-lg">
+                <h4 className="font-medium text-[#3C2317] mb-2">Pricing Rules</h4>
+                <ul className="text-sm text-[#3C2317]/60 space-y-1">
                   <li>• Single tent: {settings?.tentPrices?.singleTent || 1497} AED + VAT</li>
                   <li>• Multiple tents: {settings?.tentPrices?.multipleTents || 1297} AED each + VAT</li>
                   <li>• Maximum 5 tents per booking</li>
@@ -219,17 +236,17 @@ export default function AdminSettingsPage() {
           </Card>
 
           {/* Standard Add-ons */}
-          <Card className="bg-card border-border shadow-sm">
-            <CardHeader className="">
-              <CardTitle className="flex items-center text-card-foreground">
-                <DollarSign className="w-5 h-5 mr-2 text-accent" />
+          <Card className="bg-[#FBF9D9]/80 backdrop-blur-sm border-[#D3B88C]/50 shadow-xl">
+            <CardHeader className="border-b border-[#D3B88C]/50">
+              <CardTitle className="text-[#3C2317] text-lg font-semibold flex items-center">
+                <DollarSign className="w-5 h-5 mr-2 text-[#D3B88C]" />
                 Standard Add-on Pricing
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="space-y-3">
-                  <Label htmlFor="charcoal" className="text-card-foreground font-medium">
+                  <Label htmlFor="charcoal" className="text-[#3C2317] font-medium">
                     Charcoal (AED)
                   </Label>
                   <Input
@@ -237,13 +254,13 @@ export default function AdminSettingsPage() {
                     type="number"
                     value={settings?.addOnPrices?.charcoal || 60}
                     onChange={(e) => updateSettings("addOnPrices.charcoal", Number(e.target.value))}
-                    className="border-border focus:border-primary focus:ring-primary/20"
+                    className="border-[#D3B88C] focus:border-[#3C2317] focus:ring-[#3C2317]/20 bg-white/50"
                   />
-                  <p className="text-sm text-muted-foreground">Premium charcoal for BBQ</p>
+                  <p className="text-sm text-[#3C2317]/60">Premium charcoal for BBQ</p>
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="firewood" className="text-card-foreground font-medium">
+                  <Label htmlFor="firewood" className="text-[#3C2317] font-medium">
                     Firewood (AED)
                   </Label>
                   <Input
@@ -251,13 +268,13 @@ export default function AdminSettingsPage() {
                     type="number"
                     value={settings?.addOnPrices?.firewood || 75}
                     onChange={(e) => updateSettings("addOnPrices.firewood", Number(e.target.value))}
-                    className="border-border focus:border-primary focus:ring-primary/20"
+                    className="border-[#D3B88C] focus:border-[#3C2317] focus:ring-[#3C2317]/20 bg-white/50"
                   />
-                  <p className="text-sm text-muted-foreground">Dry firewood for campfire</p>
+                  <p className="text-sm text-[#3C2317]/60">Dry firewood for campfire</p>
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="portableToilet" className="text-card-foreground font-medium">
+                  <Label htmlFor="portableToilet" className="text-[#3C2317] font-medium">
                     Portable Toilet (AED)
                   </Label>
                   <Input
@@ -265,29 +282,29 @@ export default function AdminSettingsPage() {
                     type="number"
                     value={settings?.addOnPrices?.portableToilet || 200}
                     onChange={(e) => updateSettings("addOnPrices.portableToilet", Number(e.target.value))}
-                    className="border-border focus:border-primary focus:ring-primary/20"
+                    className="border-[#D3B88C] focus:border-[#3C2317] focus:ring-[#3C2317]/20 bg-white/50"
                   />
-                  <p className="text-sm text-muted-foreground">Clean portable toilet facility (FREE with children)</p>
+                  <p className="text-sm text-[#3C2317]/60">Clean portable toilet facility (FREE with children)</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Custom Add-ons */}
-          <Card className="bg-card border-border shadow-sm">
-            <CardHeader className="">
-              <CardTitle className="flex items-center text-card-foreground">
-                <Plus className="w-5 h-5 mr-2 text-secondary" />
+          <Card className="bg-[#FBF9D9]/80 backdrop-blur-sm border-[#D3B88C]/50 shadow-xl">
+            <CardHeader className="border-b border-[#D3B88C]/50">
+              <CardTitle className="text-[#3C2317] text-lg font-semibold flex items-center">
+                <Plus className="w-5 h-5 mr-2 text-[#D3B88C]" />
                 Custom Add-ons Management
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
               {/* Add New Custom Add-on */}
-              <div className="border border-border rounded-lg p-4 bg-muted/20">
-                <h4 className="font-medium text-card-foreground mb-4">Add New Custom Add-on</h4>
+              <div className="border border-[#D3B88C]/50 rounded-lg p-4 bg-[#E6CFA9]/20">
+                <h4 className="font-medium text-[#3C2317] mb-4">Add New Custom Add-on</h4>
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="newAddOnName" className="text-card-foreground">
+                    <Label htmlFor="newAddOnName" className="text-[#3C2317]">
                       Name
                     </Label>
                     <Input
@@ -295,11 +312,11 @@ export default function AdminSettingsPage() {
                       placeholder="e.g., Extra Blankets"
                       value={newAddOn.name}
                       onChange={(e) => setNewAddOn({ ...newAddOn, name: e.target.value })}
-                      className="border-border focus:border-primary"
+                      className="border-[#D3B88C] focus:border-[#3C2317] bg-white/50"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="newAddOnPrice" className="text-card-foreground">
+                    <Label htmlFor="newAddOnPrice" className="text-[#3C2317]">
                       Price (AED)
                     </Label>
                     <Input
@@ -308,11 +325,11 @@ export default function AdminSettingsPage() {
                       placeholder="0"
                       value={newAddOn.price}
                       onChange={(e) => setNewAddOn({ ...newAddOn, price: Number(e.target.value) })}
-                      className="border-border focus:border-primary"
+                      className="border-[#D3B88C] focus:border-[#3C2317] bg-white/50"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="newAddOnDescription" className="text-card-foreground">
+                    <Label htmlFor="newAddOnDescription" className="text-[#3C2317]">
                       Description
                     </Label>
                     <Input
@@ -320,13 +337,13 @@ export default function AdminSettingsPage() {
                       placeholder="Brief description"
                       value={newAddOn.description}
                       onChange={(e) => setNewAddOn({ ...newAddOn, description: e.target.value })}
-                      className="border-border focus:border-primary"
+                      className="border-[#D3B88C] focus:border-[#3C2317] bg-white/50"
                     />
                   </div>
                 </div>
                 <Button
                   onClick={addCustomAddOn}
-                  className="mt-4 bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                  className="mt-4 bg-gradient-to-r from-[#84cc16] to-[#65a30d] hover:from-[#84cc16]/90 hover:to-[#65a30d]/90 text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Custom Add-on
@@ -336,29 +353,31 @@ export default function AdminSettingsPage() {
               {/* Existing Custom Add-ons */}
               {settings?.customAddOns && settings.customAddOns.length > 0 && (
                 <div className="space-y-4">
-                  <h4 className="font-medium text-card-foreground">Existing Custom Add-ons</h4>
-                  <div className="grid gap-4">
-                    {settings.customAddOns.map((addon: any) => (
+                  <h4 className="font-medium text-[#3C2317] text-sm">Existing Custom Add-ons</h4>
+                  <div className="grid gap-3">
+                    {settings.customAddOns.map((addon: any, index: number) => (
                       <div
                         key={addon.id}
-                        className="flex items-center justify-between p-4 border border-border rounded-lg bg-card"
+                        className={`flex items-center justify-between p-3 border border-[#D3B88C]/50 rounded-lg transition-colors hover:bg-[#E6CFA9]/20 ${
+                          index % 2 === 0 ? "bg-white/30" : "bg-[#FBF9D9]/30"
+                        }`}
                       >
                         <div className="flex-1">
                           <div className="flex items-center space-x-3">
-                            <h5 className="font-medium text-card-foreground">{addon.name}</h5>
-                            <Badge variant="outline">AED {addon.price}</Badge>
+                            <h5 className="font-medium text-[#3C2317] text-sm">{addon.name}</h5>
+                            <Badge variant="outline" className="border-[#D3B88C] text-[#3C2317] text-xs">
+                              AED {addon.price}
+                            </Badge>
                           </div>
-                          {addon.description && (
-                            <p className="text-sm text-muted-foreground mt-1">{addon.description}</p>
-                          )}
+                          {addon.description && <p className="text-xs text-[#3C2317]/60 mt-1">{addon.description}</p>}
                         </div>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => removeCustomAddOn(addon.id)}
-                          className="border-destructive/20 text-destructive hover:bg-destructive/10"
+                          className="border-red-200 text-red-600 hover:bg-red-600 hover:text-white hover:border-red-600 cursor-pointer transition-all duration-200 h-8 px-2"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3 h-3" />
                         </Button>
                       </div>
                     ))}
@@ -369,19 +388,19 @@ export default function AdminSettingsPage() {
           </Card>
 
           {/* Location & Business Rules */}
-          <Card className="bg-card border-border shadow-sm">
-            <CardHeader className="">
-              <CardTitle className="flex items-center text-card-foreground">
-                <MapPin className="w-5 h-5 mr-2 text-primary" />
+          <Card className="bg-[#FBF9D9]/80 backdrop-blur-sm border-[#D3B88C]/50 shadow-xl">
+            <CardHeader className="border-b border-[#D3B88C]/50">
+              <CardTitle className="text-[#3C2317] text-lg font-semibold flex items-center">
+                <MapPin className="w-5 h-5 mr-2 text-[#D3B88C]" />
                 Location & Business Rules
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <Label htmlFor="wadiSurcharge" className="text-card-foreground font-medium flex items-center">
+                  <Label htmlFor="wadiSurcharge" className="text-[#3C2317] font-medium flex items-center">
                     Wadi Location Surcharge (AED)
-                    <Badge variant="outline" className="ml-2 text-xs">
+                    <Badge variant="outline" className="ml-2 text-xs border-[#D3B88C] text-[#3C2317]">
                       Distance Fee
                     </Badge>
                   </Label>
@@ -390,15 +409,15 @@ export default function AdminSettingsPage() {
                     type="number"
                     value={settings?.wadiSurcharge || 250}
                     onChange={(e) => updateSettings("wadiSurcharge", Number(e.target.value))}
-                    className="border-border focus:border-primary focus:ring-primary/20"
+                    className="border-[#D3B88C] focus:border-[#3C2317] focus:ring-[#3C2317]/20 bg-white/50"
                   />
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-[#3C2317]/60">
                     Additional charge for Wadi locations due to distance and logistics
                   </p>
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="vatRate" className="text-card-foreground font-medium">
+                  <Label htmlFor="vatRate" className="text-[#3C2317] font-medium">
                     VAT Rate (%)
                   </Label>
                   <Input
@@ -407,20 +426,20 @@ export default function AdminSettingsPage() {
                     step="0.01"
                     value={settings ? settings.vatRate * 100 : 5}
                     onChange={(e) => updateSettings("vatRate", Number(e.target.value) / 100)}
-                    className="border-border focus:border-primary focus:ring-primary/20"
+                    className="border-[#D3B88C] focus:border-[#3C2317] focus:ring-[#3C2317]/20 bg-white/50"
                   />
-                  <p className="text-sm text-muted-foreground">UAE VAT rate applied to all bookings</p>
+                  <p className="text-sm text-[#3C2317]/60">UAE VAT rate applied to all bookings</p>
                 </div>
               </div>
 
-              <Separator />
+              <Separator className="bg-[#D3B88C]/50" />
 
               <div className="space-y-4">
-                <h4 className="font-medium text-card-foreground">Business Rules Summary</h4>
+                <h4 className="font-medium text-[#3C2317]">Business Rules Summary</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <h5 className="text-sm font-medium text-card-foreground">Booking Constraints</h5>
-                    <ul className="text-sm text-muted-foreground space-y-1">
+                    <h5 className="text-sm font-medium text-[#3C2317]">Booking Constraints</h5>
+                    <ul className="text-sm text-[#3C2317]/60 space-y-1">
                       <li>• Maximum 5 tents per booking</li>
                       <li>• Minimum 2 days advance booking</li>
                       <li>• Wadi requires minimum 2 tents</li>
@@ -428,8 +447,8 @@ export default function AdminSettingsPage() {
                     </ul>
                   </div>
                   <div className="space-y-3">
-                    <h5 className="text-sm font-medium text-card-foreground">Special Offers</h5>
-                    <ul className="text-sm text-muted-foreground space-y-1">
+                    <h5 className="text-sm font-medium text-[#3C2317]">Special Offers</h5>
+                    <ul className="text-sm text-[#3C2317]/60 space-y-1">
                       <li>• Portable toilet FREE with children</li>
                       <li>• Bulk discount for 2+ tents</li>
                       <li>• Desert location is standard (no surcharge)</li>
@@ -446,7 +465,7 @@ export default function AdminSettingsPage() {
             <Button
               variant="outline"
               onClick={fetchSettings}
-              className="border-border text-muted-foreground hover:bg-muted bg-transparent"
+              className="border-[#D3B88C] text-[#3C2317] hover:bg-[#D3B88C]/20 bg-transparent"
             >
               Reset Changes
             </Button>
@@ -454,11 +473,11 @@ export default function AdminSettingsPage() {
               onClick={handleSave}
               disabled={saving}
               size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+              className="bg-gradient-to-r from-[#3C2317] to-[#5D4037] hover:from-[#3C2317]/90 hover:to-[#5D4037]/90 text-[#FBF9D9] px-8 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
             >
               {saving ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#FBF9D9] mr-2"></div>
                   Saving...
                 </>
               ) : (

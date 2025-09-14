@@ -5,10 +5,9 @@ export async function GET(request: NextRequest) {
   try {
     const { db } = await connectToDatabase()
 
-    // Fetch all bookings
-    const bookings = await db.collection("bookings").find({}).toArray()
+    const bookings = await db.collection("bookings").find({ isPaid: true }).toArray()
 
-    // Generate monthly bookings data
+    // Generate monthly bookings data - only paid bookings
     const monthlyData = bookings.reduce((acc: any, booking: any) => {
       const month = new Date(booking.bookingDate).toLocaleDateString("en-US", {
         month: "short",
@@ -18,13 +17,11 @@ export async function GET(request: NextRequest) {
         acc[month] = { month, bookings: 0, revenue: 0 }
       }
       acc[month].bookings += 1
-      if (booking.isPaid) {
-        acc[month].revenue += booking.total
-      }
+      acc[month].revenue += booking.total
       return acc
     }, {})
 
-    // Generate location stats data
+    // Generate location stats data - only paid bookings
     const locationData = bookings.reduce((acc: any, booking: any) => {
       if (!acc[booking.location]) {
         acc[booking.location] = {
@@ -34,26 +31,22 @@ export async function GET(request: NextRequest) {
         }
       }
       acc[booking.location].bookings += 1
-      if (booking.isPaid) {
-        acc[booking.location].revenue += booking.total
-      }
+      acc[booking.location].revenue += booking.total
       return acc
     }, {})
 
-    // Calculate summary stats
+    // Calculate summary stats - only paid bookings
     const totalBookings = bookings.length
-    const paidBookings = bookings.filter((b: any) => b.isPaid).length
-    const totalRevenue = bookings.filter((b: any) => b.isPaid).reduce((sum: number, b: any) => sum + b.total, 0)
-    const pendingBookings = totalBookings - paidBookings
+    const totalRevenue = bookings.reduce((sum: number, b: any) => sum + b.total, 0)
 
     const chartData = {
       monthlyBookings: Object.values(monthlyData),
       locationStats: Object.values(locationData),
       stats: {
         totalBookings,
-        paidBookings,
+        paidBookings: totalBookings,
         totalRevenue,
-        pendingBookings,
+        pendingBookings: 0, // Remove pending orders logic
       },
     }
 

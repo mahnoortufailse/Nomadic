@@ -4,6 +4,8 @@
 import type React from "react"
 
 import { useState, useEffect, useCallback, useRef } from "react"
+import toast from "react-hot-toast"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,7 +13,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { MapPin, Users, Plus, Minus, Check, X, Loader2 } from "lucide-react"
+import { MapPin, Users, Plus, Minus, Check, X, Loader2, Star, Calendar, Shield } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import Image from "next/image"
@@ -23,6 +25,16 @@ export default function BookingPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [settings, setSettings] = useState<Settings | null>(null)
   const [loadingSettings, setLoadingSettings] = useState(true)
+  const [dateConstraints, setDateConstraints] = useState<{
+    lockedLocation: string | null
+    totalTents: number
+    availableLocations: string[]
+  }>({
+    lockedLocation: null,
+    totalTents: 0,
+    availableLocations: ["Desert", "Mountain", "Wadi"],
+  })
+  const [checkingConstraints, setCheckingConstraints] = useState(false)
   const isUserInteracting = useRef(false)
   const refreshTimeoutRef = useRef<NodeJS.Timeout>()
   const interactionTimeoutRef = useRef<NodeJS.Timeout>()
@@ -50,6 +62,8 @@ export default function BookingPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [touched, setTouched] = useState<Record<string, boolean>>({})
+
+  const [locationMessage, setLocationMessage] = useState("")
 
   const campingImages = [
     {
@@ -169,12 +183,58 @@ export default function BookingPage() {
     }
   }, [])
 
+  const checkDateConstraints = async (dateString: string) => {
+    setCheckingConstraints(true)
+    try {
+      console.log("[v0] Checking constraints for date:", dateString)
+      const response = await fetch(`/api/date-constraints?date=${dateString}`)
+      const data = await response.json()
+      console.log("[v0] API response:", data)
+
+      if (data.lockedLocation) {
+        console.log("[v0] Date is locked to location:", data.lockedLocation)
+        setDateConstraints({
+          lockedLocation: data.lockedLocation,
+          totalTents: data.totalTents,
+          availableLocations: [data.lockedLocation], // Only locked location
+        })
+
+        console.log("[v0] Auto-setting location to:", data.lockedLocation)
+        setFormData((prev) => ({
+          ...prev,
+          location: data.lockedLocation as "Desert" | "Mountain" | "Wadi",
+        }))
+
+        setLocationMessage(`This date is reserved for ${data.lockedLocation} location only`)
+      } else {
+        console.log("[v0] Date is available for all locations")
+        setDateConstraints({
+          lockedLocation: null,
+          totalTents: 0,
+          availableLocations: ["Desert", "Mountain", "Wadi"],
+        })
+        setLocationMessage("")
+      }
+    } catch (error) {
+      console.error("[v0] Error checking date constraints:", error)
+      setDateConstraints({
+        lockedLocation: null,
+        totalTents: 0,
+        availableLocations: ["Desert", "Mountain", "Wadi"],
+      })
+      setLocationMessage("")
+    } finally {
+      setCheckingConstraints(false)
+    }
+  }
+
   const handleDateSelect = (date: Date | undefined) => {
     setUserInteracting(true)
     setSelectedDate(date)
+    const dateString = date ? date.toISOString().split("T")[0] : ""
     setFormData((prev) => ({
       ...prev,
-      bookingDate: date ? date.toISOString().split("T")[0] : "",
+      bookingDate: dateString,
     }))
     setTouched((prev) => ({ ...prev, bookingDate: true }))
 
@@ -182,13 +242,23 @@ export default function BookingPage() {
       const newErrors = { ...errors }
       delete newErrors.bookingDate
       setErrors(newErrors)
+      checkDateConstraints(dateString)
+    } else {
+      setDateConstraints({
+        lockedLocation: null,
+        totalTents: 0,
+        availableLocations: ["Desert", "Mountain", "Wadi"],
+      })
     }
   }
 
   const handleTentChange = (increment: boolean) => {
     setUserInteracting(true)
     const newCount = increment ? formData.numberOfTents + 1 : formData.numberOfTents - 1
-    if (newCount >= 1 && newCount <= 5) {
+
+    const maxTentsPerBooking = 5
+
+    if (newCount >= 1 && newCount <= maxTentsPerBooking) {
       setFormData((prev) => ({ ...prev, numberOfTents: newCount }))
       setTouched((prev) => ({ ...prev, numberOfTents: true }))
 
@@ -202,6 +272,12 @@ export default function BookingPage() {
         setErrors(newErrors)
       }
     }
+
+    // Clear interaction flag after a delay
+    clearTimeout(interactionTimeoutRef.current)
+    interactionTimeoutRef.current = setTimeout(() => {
+      setUserInteracting(false)
+    }, 1000)
   }
 
   const handleGuestChange = (increment: boolean) => {
@@ -212,10 +288,28 @@ export default function BookingPage() {
     }
   }
 
-  const handleInputChange = (field: keyof BookingFormData, value: string | boolean) => {
-    setUserInteracting(true)
+  const handleInputChange = (field: string, value: string) => {
+    console.log(`[v0] Input changed - ${field}:`, value)
+
     setFormData((prev) => ({ ...prev, [field]: value }))
     setTouched((prev) => ({ ...prev, [field]: true }))
+
+    const fetchDateConstraints = async (dateString: string) => {
+      try {
+        const response = await fetch(`/api/date-constraints?date=${dateString}`)
+        const data = await response.json()
+        setDateConstraints(data)
+      } catch (error) {
+        console.error("Error fetching date constraints:", error)
+      }
+    }
+
+    if (field === "bookingDate" && value) {
+      console.log("[v0] Date selected, checking constraints for:", value)
+      const selectedDate = new Date(value)
+      setSelectedDate(selectedDate)
+      fetchDateConstraints(value)
+    }
 
     if (typeof value === "string") {
       validateField(field, value)
@@ -238,19 +332,32 @@ export default function BookingPage() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
-    if (!formData.customerName.trim()) newErrors.customerName = "Name is required"
+    if (!formData.customerName.trim()) {
+      newErrors.customerName = "Name is required"
+    }
+
     if (!formData.customerEmail.trim()) {
       newErrors.customerEmail = "Email is required"
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customerEmail)) {
+    } else if (!/\S+@\S+\.\S+/.test(formData.customerEmail)) {
       newErrors.customerEmail = "Please enter a valid email address"
     }
 
-    if (!formData.customerPhone.startsWith("+971") || formData.customerPhone.length < 12) {
-      newErrors.customerPhone = "Valid UAE phone number required (+971501234567)"
+    if (!formData.customerPhone.trim()) {
+      newErrors.customerPhone = "Phone number is required"
+    } else if (!formData.customerPhone.startsWith("+971")) {
+      newErrors.customerPhone = "Phone number must start with +971"
     }
-    if (!formData.bookingDate) newErrors.bookingDate = "Booking date is required"
+
+    if (!formData.bookingDate) {
+      newErrors.bookingDate = "Booking date is required"
+    }
+
     if (formData.location === "Wadi" && formData.numberOfTents < 2) {
       newErrors.numberOfTents = "Wadi location requires at least 2 tents"
+    }
+
+    if (formData.numberOfTents > 5) {
+      newErrors.numberOfTents = "Maximum 5 tents per booking"
     }
 
     setErrors(newErrors)
@@ -329,15 +436,23 @@ export default function BookingPage() {
           element.scrollIntoView({ behavior: "smooth", block: "center" })
         }
       }
+
+      // Show error toast for form validation
+      toast.error("Check all required fields and try again.")
+
       return
     }
 
     if (formData.numberOfTents > 5) {
-      alert("For bookings with more than 5 tents, please contact us directly for a custom quote.")
+      // Show info toast for large booking
+      toast.info("For bookings with more than 5 tents, please contact us directly for a custom quote.")
       return
     }
 
     setIsLoading(true)
+
+    // Show loading toast
+    const loadingToast = toast.loading("Processing your booking...")
 
     try {
       const bookingData = {
@@ -374,10 +489,21 @@ export default function BookingPage() {
       }
 
       const { url } = await checkoutResponse.json()
-      window.location.href = url
+
+      // Dismiss loading toast and show success
+      toast.dismiss(loadingToast)
+      toast.success("Booking created successfully!")
+
+      // Add a small delay to show the success message
+      setTimeout(() => {
+        window.location.href = url
+      }, 1500)
     } catch (error) {
       console.error("Booking error:", error)
-      alert(error instanceof Error ? error.message : "An error occurred. Please try again.")
+
+      // Dismiss loading toast and show error
+      toast.dismiss(loadingToast)
+      toast.error("Booking failed")
     } finally {
       setIsLoading(false)
     }
@@ -399,124 +525,216 @@ export default function BookingPage() {
 
   if (loadingSettings) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-slate-600">Loading booking system...</p>
+      <div className="min-h-screen bg-gradient-to-br from-[#FBF9D9] via-[#E6CFA9] to-[#D3B88C] flex items-center justify-center">
+        <div className="text-center animate-fade-in-up">
+          <div className="relative">
+            <Loader2 className="w-12 h-12 animate-spin text-[#3C2317] mx-auto mb-6" />
+            <div className="absolute inset-0 w-12 h-12 border-4 border-[#3C2317]/20 rounded-full animate-pulse mx-auto"></div>
+          </div>
+          <p className="text-[#3C2317] text-lg font-medium">Loading your premium camping experience...</p>
         </div>
       </div>
     )
   }
 
+  const handleLocationChange = (location: string) => {
+    console.log("[v0] Location changed to:", location)
+    setFormData((prev) => ({ ...prev, location }))
+    setTouched((prev) => ({ ...prev, location: true }))
+
+    // Immediate validation for Wadi location
+    if (location === "Wadi" && formData.numberOfTents < 2) {
+      setErrors((prev) => ({
+        ...prev,
+        numberOfTents: "Wadi location requires at least 2 tents",
+      }))
+      setTouched((prev) => ({ ...prev, numberOfTents: true }))
+    } else if (location !== "Wadi") {
+      // Clear Wadi-specific errors when switching away from Wadi
+      setErrors((prev) => {
+        const newErrors = { ...prev }
+        if (prev.numberOfTents === "Wadi location requires at least 2 tents") {
+          delete newErrors.numberOfTents
+        }
+        return newErrors
+      })
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <nav className="bg-white border-b border-slate-200 shadow-sm p-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <MapPin className="w-5 h-5 text-blue-600" />
+    <div className="min-h-screen bg-gradient-to-br from-[#FBF9D9] via-[#E6CFA9] to-[#D3B88C]">
+      <nav className="bg-[#3C2317]/90 backdrop-blur-md border-b border-[#3C2317]/50 shadow-lg sticky top-0 z-50 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
+              <div className="relative">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-[#FBF9D9]" />
+                </div>
+                <div className="absolute -inset-1 bg-gradient-to-br from-[#3C2317]/20 to-[#5D4037]/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+              <div>
+                <span className="text-xl sm:text-2xl md:text-3xl font-bold tracking-wide text-white">NOMADIC</span>
+                <p className="text-xs sm:text-sm text-white/80">Premium Desert Experiences</p>
+              </div>
+            </Link>
+            <div className="flex items-center space-x-1 sm:space-x-2">
+              <div className="flex items-center space-x-0.5 sm:space-x-1 text-[#D3B88C]">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-current" />
+                ))}
+              </div>
+              <span className="text-xs sm:text-sm text-white/80 hidden sm:block">Luxury Certified</span>
             </div>
-            <span className="text-2xl font-bold tracking-wide text-slate-800">NOMADIC</span>
-          </Link>
+          </div>
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="md:col-span-2">
-              <div className="relative h-96 rounded-xl overflow-hidden shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        <div className="mb-8 sm:mb-12 animate-fade-in-up">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="lg:col-span-3">
+              <div className="relative h-[300px] sm:h-[400px] md:h-[500px] rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl group">
                 <Image
-                  src={campingImages[currentImageIndex].src || "/placeholder.svg"}
+                  src={
+                    campingImages[currentImageIndex].src ||
+                    "/placeholder.svg?height=500&width=800&query=luxury desert camping" ||
+                    "/placeholder.svg" ||
+                    "/placeholder.svg" ||
+                    "/placeholder.svg" ||
+                    "/placeholder.svg" ||
+                    "/placeholder.svg" ||
+                    "/placeholder.svg" ||
+                    "/placeholder.svg"
+                  }
                   alt={campingImages[currentImageIndex].alt}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute top-4 right-4">
-                  <Button variant="secondary" size="sm" className="bg-white/90 text-slate-800 hover:bg-white">
-                    View Photos
-                  </Button>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#3C2317]/40 via-transparent to-transparent"></div>
+
+                <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 text-[#FBF9D9]">
+                  <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
+                    <div className="flex space-x-0.5 sm:space-x-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-current text-[#D3B88C]" />
+                      ))}
+                    </div>
+                    <span className="text-xs sm:text-sm font-medium">Premium Experience</span>
+                  </div>
+                  <p className="text-xs sm:text-sm opacity-90 max-w-xs">{campingImages[currentImageIndex].alt}</p>
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 sm:gap-4">
               {campingImages.slice(1, 5).map((image, index) => (
                 <div
                   key={index}
-                  className="relative h-44 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow"
+                  className="relative h-[70px] sm:h-[90px] md:h-[115px] rounded-lg sm:rounded-xl overflow-hidden shadow-md sm:shadow-lg cursor-pointer group transition-all duration-300 hover:shadow-xl hover:scale-105"
                   onClick={() => setCurrentImageIndex(index + 1)}
                 >
                   <Image
-                    src={image.src || "/placeholder.svg"}
+                    src={image.src || "/placeholder.svg?height=115&width=200&query=camping scene"}
                     alt={image.alt}
                     fill
-                    className="object-cover hover:scale-105 transition-transform duration-300"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
+                  <div className="absolute inset-0 bg-[#3C2317]/20 group-hover:bg-[#3C2317]/10 transition-colors duration-300"></div>
+                  {currentImageIndex === index + 1 && (
+                    <div className="absolute inset-0 border-2 sm:border-3 border-[#D3B88C] rounded-lg sm:rounded-xl"></div>
+                  )}
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="mb-6">
-            <h1 className="text-4xl font-bold text-slate-900 mb-2">Nomadic ⭐ Camping Setup</h1>
-            <div className="flex items-center space-x-4 text-slate-600">
-              <span className="flex items-center">
-                <MapPin className="w-4 h-4 mr-1" />
-                Desert • Wadi • Mountain
-              </span>
-              <span>★★★★★ Private</span>
+          <div className="text-center lg:text-left mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#3C2317] mb-3 sm:mb-4 text-balance">
+              Nomadic <span className="text-[#D3B88C]">Premium</span> Camping
+            </h1>
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4 sm:mb-6">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 md:gap-6 mb-3 sm:mb-4 lg:mb-0">
+                <div className="flex items-center space-x-1 sm:space-x-2 text-[#3C2317]/80">
+                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-[#D3B88C]" />
+                  <span className="text-sm sm:text-base font-medium">Desert • Wadi • Mountain</span>
+                </div>
+                <div className="flex items-center space-x-1 sm:space-x-2">
+                  <div className="flex space-x-0.5 sm:space-x-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-current text-[#D3B88C]" />
+                    ))}
+                  </div>
+                  <span className="text-sm sm:text-base text-[#3C2317]/80 font-medium">Luxury Certified</span>
+                </div>
+                <div className="flex items-center space-x-1 sm:space-x-2 text-[#3C2317]/80">
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-[#D3B88C]" />
+                  <span className="text-sm sm:text-base font-medium">Private & Secure</span>
+                </div>
+              </div>
             </div>
-            <p className="text-slate-700 mt-2">The UAE's most luxurious camping experience</p>
+            <p className="text-base sm:text-lg text-[#3C2317]/80 max-w-2xl text-pretty mx-auto lg:mx-0">
+              Experience the UAE's most luxurious camping adventure with premium amenities, breathtaking locations, and
+              unforgettable memories under the stars.
+            </p>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <Card className="border-slate-200 shadow-lg">
-              <CardHeader className="">
-                <CardTitle className="text-slate-800">Who's going?</CardTitle>
+        <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+            <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 animate-scale-in bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+              <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
+                <CardTitle className="text-[#3C2317] flex items-center space-x-2 sm:space-x-3 text-lg sm:text-xl">
+                  <Users className="w-5 h-5 sm:w-6 sm:h-6 text-[#3C2317]" />
+                  <span>Who's joining the adventure?</span>
+                </CardTitle>
               </CardHeader>
-              <CardContent className="p-6">
-                <p className="text-slate-700 mb-4">
-                  Each tent can sleep up to 4 pax, let us know your group size so we can recommend the perfect setup for
-                  your camping experience.
+              <CardContent className="p-4 sm:p-6 md:p-8">
+                <p className="text-[#3C2317]/80 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">
+                  Each luxury tent accommodates up to 4 guests comfortably. Let us know your group size so we can create
+                  the perfect setup for your desert experience.
                 </p>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center justify-center space-x-4 sm:space-x-6">
                   <Button
                     type="button"
                     variant="outline"
-                    size="icon"
+                    size="lg"
                     onClick={() => handleGuestChange(false)}
                     disabled={guestCount <= 1}
-                    className="border-slate-300 text-slate-600 hover:bg-slate-50"
+                    className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#3C2317]/5 transition-all duration-300 h-10 w-10 sm:h-12 sm:w-12 rounded-xl"
                   >
-                    <Minus className="h-4 w-4" />
+                    <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
-                  <div className="flex items-center space-x-2 px-4 py-2 bg-blue-50 rounded-lg">
-                    <Users className="h-4 w-4 text-blue-600" />
-                    <span className="text-lg font-medium text-slate-800">{guestCount} guests</span>
+                  <div className="flex items-center space-x-2 sm:space-x-4 px-4 sm:px-6 py-2 sm:py-3 md:py-4 bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 rounded-xl sm:rounded-2xl border border-[#D3B88C]/30">
+                    <Users className="h-5 w-5 sm:h-6 sm:w-6 text-[#3C2317]" />
+                    <span className="text-xl sm:text-2xl font-bold text-[#3C2317]">{guestCount}</span>
+                    <span className="text-[#3C2317]/80 font-medium text-sm sm:text-base">
+                      guest{guestCount !== 1 ? "s" : ""}
+                    </span>
                   </div>
                   <Button
                     type="button"
                     variant="outline"
-                    size="icon"
+                    size="lg"
                     onClick={() => handleGuestChange(true)}
                     disabled={guestCount >= 20}
-                    className="border-slate-300 text-slate-600 hover:bg-slate-50"
+                    className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#3C2317]/5 transition-all duration-300 h-10 w-10 sm:h-12 sm:w-12 rounded-xl"
                   >
-                    <Plus className="h-4 w-4" />
+                    <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-slate-200 shadow-lg">
-              <CardHeader className="">
-                <CardTitle className="text-slate-800">Choose a date</CardTitle>
+            <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+              <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
+                <CardTitle className="text-[#3C2317] flex items-center space-x-2 sm:space-x-3 text-lg sm:text-xl">
+                  <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-[#3C2317]" />
+                  <span>Choose your perfect date</span>
+                </CardTitle>
               </CardHeader>
-              <CardContent className="p-6">
-                <div className="mb-2">
-                  <Label htmlFor="bookingDate" className="text-slate-700">
+              <CardContent className="p-4 sm:p-6 md:p-8">
+                <div className="mb-3 sm:mb-4">
+                  <Label htmlFor="bookingDate" className="text-[#3C2317] font-medium mb-2 sm:mb-3 block">
                     Select Date *
                   </Label>
                 </div>
@@ -534,26 +752,32 @@ export default function BookingPage() {
                   onBlur={(e) => handleBlur("bookingDate", e.target.value)}
                   min={minDate.toISOString().split("T")[0]}
                   className={cn(
-                    "border-slate-200 focus:border-blue-400",
-                    errors.bookingDate && touched.bookingDate && "border-red-400",
+                    "border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-12 sm:h-14 rounded-xl",
+                    errors.bookingDate && touched.bookingDate && "border-red-500 focus:border-red-500",
                   )}
                 />
 
                 {errors.bookingDate && touched.bookingDate && (
-                  <p className="text-sm text-red-600 mt-1">{errors.bookingDate}</p>
+                  <p className="text-sm text-red-600 mt-2 sm:mt-3 flex items-center space-x-1 sm:space-x-2">
+                    <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span>{errors.bookingDate}</span>
+                  </p>
                 )}
-                <p className="text-sm text-slate-500 mt-2">Minimum 2 days advance booking required</p>
+                <p className="text-xs sm:text-sm text-[#3C2317]/80 mt-3 sm:mt-4 flex items-center space-x-1 sm:space-x-2">
+                  <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-[#3C2317]" />
+                  <span>Minimum 2 days advance booking required for premium preparation</span>
+                </p>
               </CardContent>
             </Card>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <Card className="border-slate-200 shadow-lg">
-                <CardHeader className="">
-                  <CardTitle className="text-slate-800">Personal Information</CardTitle>
+            <form className="space-y-6 sm:space-y-8">
+              <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
+                  <CardTitle className="text-[#3C2317] text-lg sm:text-xl">Personal Information</CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 space-y-6">
+                <CardContent className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
                   <div>
-                    <Label htmlFor="customerName" className="text-slate-700 mb-2 block">
+                    <Label htmlFor="customerName" className="text-[#3C2317] mb-2 sm:mb-3 block font-medium">
                       Full Name *
                     </Label>
                     <Input
@@ -562,18 +786,21 @@ export default function BookingPage() {
                       onChange={(e) => handleInputChange("customerName", e.target.value)}
                       onBlur={(e) => handleBlur("customerName", e.target.value)}
                       className={cn(
-                        "border-slate-200 focus:border-blue-400",
-                        errors.customerName && touched.customerName && "border-red-400",
+                        "border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-12 sm:h-14 rounded-xl",
+                        errors.customerName && touched.customerName && "border-red-500 focus:border-red-500",
                       )}
                       placeholder="Enter your full name"
                     />
                     {errors.customerName && touched.customerName && (
-                      <p className="text-sm text-red-600 mt-1">{errors.customerName}</p>
+                      <p className="text-sm text-red-600 mt-2 flex items-center space-x-1 sm:space-x-2">
+                        <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span>{errors.customerName}</span>
+                      </p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="customerEmail" className="text-slate-700 mb-2 block">
+                    <Label htmlFor="customerEmail" className="text-[#3C2317] mb-2 sm:mb-3 block font-medium">
                       Email Address *
                     </Label>
                     <Input
@@ -583,18 +810,21 @@ export default function BookingPage() {
                       onChange={(e) => handleInputChange("customerEmail", e.target.value)}
                       onBlur={(e) => handleBlur("customerEmail", e.target.value)}
                       className={cn(
-                        "border-slate-200 focus:border-blue-400",
-                        errors.customerEmail && touched.customerEmail && "border-red-400",
+                        "border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-12 sm:h-14 rounded-xl",
+                        errors.customerEmail && touched.customerEmail && "border-red-500 focus:border-red-500",
                       )}
                       placeholder="your.email@example.com"
                     />
                     {errors.customerEmail && touched.customerEmail && (
-                      <p className="text-sm text-red-600 mt-1">{errors.customerEmail}</p>
+                      <p className="text-sm text-red-600 mt-2 flex items-center space-x-1 sm:space-x-2">
+                        <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span>{errors.customerEmail}</span>
+                      </p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="customerPhone" className="text-slate-700 mb-2 block">
+                    <Label htmlFor="customerPhone" className="text-[#3C2317] mb-2 sm:mb-3 block font-medium">
                       Phone Number *
                     </Label>
                     <Input
@@ -604,376 +834,552 @@ export default function BookingPage() {
                       onBlur={(e) => handleBlur("customerPhone", e.target.value)}
                       placeholder="+971501234567"
                       className={cn(
-                        "border-slate-200 focus:border-blue-400",
-                        errors.customerPhone && touched.customerPhone && "border-red-400",
+                        "border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-12 sm:h-14 rounded-xl",
+                        errors.customerPhone && touched.customerPhone && "border-red-500 focus:border-red-500",
                       )}
                     />
                     {errors.customerPhone && touched.customerPhone && (
-                      <p className="text-sm text-red-600 mt-1">{errors.customerPhone}</p>
+                      <p className="text-sm text-red-600 mt-2 flex items-center space-x-1 sm:space-x-2">
+                        <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span>{errors.customerPhone}</span>
+                      </p>
                     )}
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-slate-200 shadow-lg">
-                <CardHeader className="">
-                  <CardTitle className="text-slate-800">Booking Details</CardTitle>
+              <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
+                  <CardTitle className="text-[#3C2317] text-lg sm:text-xl">Booking Details</CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 space-y-6">
+                <CardContent className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
                   <div>
-                    <Label className="text-slate-700 mb-2 block">Location *</Label>
+                    <Label className="text-[#3C2317] mb-2 sm:mb-3 block font-medium">Location *</Label>
+                    {locationMessage && (
+                      <div className="mb-2 sm:mb-3 p-3 sm:p-4 bg-amber-50 border-l-4 border-amber-400 rounded-lg">
+                        <p className="text-xs sm:text-sm text-amber-800 flex items-center font-medium">
+                          <Shield className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                          {locationMessage}
+                        </p>
+                        {dateConstraints.lockedLocation && (
+                          <p className="text-xs text-amber-700 mt-1">
+                            To book a different location, please select a different date.
+                          </p>
+                        )}
+                      </div>
+                    )}
+
                     <Select
                       value={formData.location}
                       onValueChange={(value: "Desert" | "Mountain" | "Wadi") => {
+                        console.log("[v0] Location selection attempted:", value)
+                        console.log("[v0] Available locations:", dateConstraints.availableLocations)
+                        console.log("[v0] Locked location:", dateConstraints.lockedLocation)
+
+                        if (dateConstraints.lockedLocation && value !== dateConstraints.lockedLocation) {
+                          console.log("[v0] Preventing location change - date is locked")
+                          setLocationMessage(
+                            `This date is reserved for ${dateConstraints.lockedLocation} location only. Please select a different date to book ${value}.`,
+                          )
+                          return
+                        }
+
                         handleInputChange("location", value)
                         validateField("numberOfTents", formData.numberOfTents.toString())
                       }}
+                      disabled={checkingConstraints}
                     >
-                      <SelectTrigger className="border-slate-200 focus:border-blue-400">
+                      <SelectTrigger className="border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 h-12 sm:h-14 rounded-xl">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Desert">Desert - Classic dune experience</SelectItem>
-                        <SelectItem value="Mountain">Mountain - Elevated adventure</SelectItem>
-                        <SelectItem value="Wadi">Wadi - Oasis experience (min. 2 tents)</SelectItem>
+                        <SelectItem
+                          value="Desert"
+                          disabled={dateConstraints.lockedLocation && dateConstraints.lockedLocation !== "Desert"}
+                        >
+                          🏜️ Desert - Classic dune experience
+                          {dateConstraints.lockedLocation && dateConstraints.lockedLocation !== "Desert" && (
+                            <span className="text-xs text-gray-500 ml-2">(Not available for this date)</span>
+                          )}
+                        </SelectItem>
+                        <SelectItem
+                          value="Mountain"
+                          disabled={dateConstraints.lockedLocation && dateConstraints.lockedLocation !== "Mountain"}
+                        >
+                          ⛰️ Mountain - Elevated adventure
+                          {dateConstraints.lockedLocation && dateConstraints.lockedLocation !== "Mountain" && (
+                            <span className="text-xs text-gray-500 ml-2">(Not available for this date)</span>
+                          )}
+                        </SelectItem>
+                        <SelectItem
+                          value="Wadi"
+                          disabled={dateConstraints.lockedLocation && dateConstraints.lockedLocation !== "Wadi"}
+                        >
+                          🌊 Wadi - Oasis experience
+                          <span className="text-xs text-amber-600 ml-2">(min. 2 tents required)</span>
+                          {dateConstraints.lockedLocation && dateConstraints.lockedLocation !== "Wadi" && (
+                            <span className="text-xs text-gray-500 ml-2">(Not available for this date)</span>
+                          )}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div>
-                    <Label className="text-slate-700 mb-2 block">Number of Tents *</Label>
-                    <div className="flex items-center space-x-4">
+                    <Label className="text-[#3C2317] mb-2 sm:mb-3 block font-medium">Number of Tents *</Label>
+                    <div className="flex items-center justify-center space-x-4 sm:space-x-6">
                       <Button
                         type="button"
                         variant="outline"
-                        size="icon"
+                        size="lg"
                         onClick={() => handleTentChange(false)}
                         disabled={formData.numberOfTents <= 1}
-                        className="border-slate-300 text-slate-600 hover:bg-slate-50"
+                        className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#3C2317]/5 transition-all duration-300 h-10 w-10 sm:h-12 sm:w-12 rounded-xl"
                       >
-                        <Minus className="h-4 w-4" />
+                        <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
                       </Button>
-                      <div className="flex items-center space-x-2 px-4 py-2 bg-blue-50 rounded-lg">
-                        <Users className="h-4 w-4 text-blue-600" />
-                        <span className="text-lg font-medium text-slate-800">{formData.numberOfTents}</span>
+                      <div className="text-center">
+                        <div className="text-2xl sm:text-3xl font-bold text-[#3C2317] mb-1">
+                          {formData.numberOfTents}
+                        </div>
+                        <div className="text-xs sm:text-sm text-[#3C2317]/70">
+                          {formData.numberOfTents === 1 ? "tent" : "tents"}
+                        </div>
                       </div>
                       <Button
                         type="button"
                         variant="outline"
-                        size="icon"
+                        size="lg"
                         onClick={() => handleTentChange(true)}
                         disabled={formData.numberOfTents >= 5}
-                        className="border-slate-300 text-slate-600 hover:bg-slate-50"
+                        className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#3C2317]/5 transition-all duration-300 h-10 w-10 sm:h-12 sm:w-12 rounded-xl"
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                       </Button>
                     </div>
                     {errors.numberOfTents && touched.numberOfTents && (
-                      <p className="text-sm text-red-600 mt-1">{errors.numberOfTents}</p>
+                      <p className="text-sm text-red-600 mt-2 sm:mt-3 flex items-center justify-center space-x-1 sm:space-x-2">
+                        <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span>{errors.numberOfTents}</span>
+                      </p>
                     )}
                     {formData.numberOfTents >= 5 && (
-                      <p className="text-sm text-slate-500 mt-1">For more than 5 tents, please contact us directly</p>
+                      <p className="text-xs sm:text-sm text-[#3C2317]/80 mt-2 sm:mt-3 text-center">
+                        Maximum 5 tents per booking. For more tents, please contact us directly
+                      </p>
                     )}
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-slate-200 shadow-lg">
-                <CardHeader className="">
-                  <CardTitle className="text-slate-800">Standard Add-ons</CardTitle>
+              <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
+                  <CardTitle className="text-[#3C2317] text-lg sm:text-xl">Premium Add-ons</CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 space-y-4">
-                  <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-50 transition-colors">
-                    <Checkbox
-                      id="charcoal"
-                      checked={formData.addOns.charcoal}
-                      onCheckedChange={(checked) => handleAddOnChange("charcoal", checked as boolean)}
-                      className="border-blue-400 data-[state=checked]:bg-blue-500"
-                    />
-                    <Label htmlFor="charcoal" className="flex-1 text-slate-700 cursor-pointer">
-                      Charcoal
-                      <span className="text-blue-500 ml-2 font-medium">
-                        AED {settings?.addOnPrices?.charcoal || 60}
-                      </span>
-                    </Label>
-                  </div>
+                <CardContent className="p-4 sm:p-6 space-y-2 sm:space-y-3">
+                  <div className="grid gap-1">
+                    {/* Charcoal Add-on */}
+                    <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30">
+                      <Checkbox
+                        id="charcoal"
+                        checked={formData.addOns.charcoal}
+                        onCheckedChange={(checked) => handleAddOnChange("charcoal", checked as boolean)}
+                        className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 sm:h-5 sm:w-5 mt-0.5 sm:mt-1 flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start mb-1">
+                          <Label htmlFor="charcoal" className="text-[#3C2317] font-medium text-sm sm:text-base cursor-pointer">
+                            Premium Charcoal
+                          </Label>
+                          <span className="text-[#3C2317] font-bold text-sm sm:text-base whitespace-nowrap ml-2 sm:ml-3">
+                            AED {settings?.addOnPrices?.charcoal || 60}
+                          </span>
+                        </div>
+                        <p className="text-xs sm:text-sm text-[#3C2317]/80 mt-1">High-quality charcoal for perfect grilling</p>
+                      </div>
+                    </div>
 
-                  <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-50 transition-colors">
-                    <Checkbox
-                      id="firewood"
-                      checked={formData.addOns.firewood}
-                      onCheckedChange={(checked) => handleAddOnChange("firewood", checked as boolean)}
-                      className="border-blue-400 data-[state=checked]:bg-blue-500"
-                    />
-                    <Label htmlFor="firewood" className="flex-1 text-slate-700 cursor-pointer">
-                      Firewood
-                      <span className="text-blue-500 ml-2 font-medium">
-                        AED {settings?.addOnPrices?.firewood || 75}
-                      </span>
-                    </Label>
-                  </div>
+                    {/* Firewood Add-on */}
+                    <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30">
+                      <Checkbox
+                        id="firewood"
+                        checked={formData.addOns.firewood}
+                        onCheckedChange={(checked) => handleAddOnChange("firewood", checked as boolean)}
+                        className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 sm:h-5 sm:w-5 mt-0.5 sm:mt-1 flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start mb-1">
+                          <Label htmlFor="firewood" className="text-[#3C2317] font-medium text-sm sm:text-base cursor-pointer">
+                            Premium Firewood
+                          </Label>
+                          <span className="text-[#3C2317] font-bold text-sm sm:text-base whitespace-nowrap ml-2 sm:ml-3">
+                            AED {settings?.addOnPrices?.firewood || 75}
+                          </span>
+                        </div>
+                        <p className="text-xs sm:text-sm text-[#3C2317]/80 mt-1">Seasoned wood for cozy campfires</p>
+                      </div>
+                    </div>
 
-                  <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-50 transition-colors">
-                    <Checkbox
-                      id="portableToilet"
-                      checked={formData.addOns.portableToilet}
-                      onCheckedChange={(checked) => handleAddOnChange("portableToilet", checked as boolean)}
-                      className="border-blue-400 data-[state=checked]:bg-blue-500"
-                    />
-                    <Label htmlFor="portableToilet" className="flex-1 text-slate-700 cursor-pointer">
-                      Portable Toilet
-                      <span className="text-blue-500 ml-2 font-medium">
-                        {formData.hasChildren
-                          ? "FREE with children"
-                          : `AED ${settings?.addOnPrices?.portableToilet || 200}`}
-                      </span>
-                    </Label>
-                  </div>
+                    {/* Portable Toilet Add-on */}
+                    <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30">
+                      <Checkbox
+                        id="portableToilet"
+                        checked={formData.addOns.portableToilet}
+                        onCheckedChange={(checked) => handleAddOnChange("portableToilet", checked as boolean)}
+                        className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 sm:h-5 sm:w-5 mt-0.5 sm:mt-1 flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start mb-1">
+                          <Label
+                            htmlFor="portableToilet"
+                            className="text-[#3C2317] font-medium text-sm sm:text-base cursor-pointer"
+                          >
+                            Luxury Portable Toilet
+                          </Label>
+                          <span className="text-[#3C2317] font-bold text-sm sm:text-base whitespace-nowrap ml-2 sm:ml-3">
+                            {formData.hasChildren
+                              ? "FREE with children"
+                              : `AED ${settings?.addOnPrices?.portableToilet || 200}`}
+                          </span>
+                        </div>
+                        <p className="text-xs sm:text-sm text-[#3C2317]/80 mt-1">Private, clean facilities for your comfort</p>
+                      </div>
+                    </div>
 
-                  <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-50 transition-colors">
-                    <Checkbox
-                      id="hasChildren"
-                      checked={formData.hasChildren}
-                      onCheckedChange={(checked) => handleInputChange("hasChildren", checked as boolean)}
-                      className="border-blue-400 data-[state=checked]:bg-blue-500"
-                    />
-                    <Label htmlFor="hasChildren" className="text-slate-700 cursor-pointer">
-                      Children in group (makes portable toilet free)
-                    </Label>
+                    {/* Children Option */}
+                    <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30">
+                      <Checkbox
+                        id="hasChildren"
+                        checked={formData.hasChildren}
+                        onCheckedChange={(checked) => handleInputChange("hasChildren", checked as boolean)}
+                        className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 sm:h-5 sm:w-5 mt-0.5 sm:mt-1 flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <Label
+                          htmlFor="hasChildren"
+                          className="text-[#3C2317] font-medium text-sm sm:text-base cursor-pointer block mb-1"
+                        >
+                          Children in group
+                        </Label>
+                        <p className="text-xs sm:text-sm text-[#3C2317]/80">Makes portable toilet complimentary</p>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
               {settings?.customAddOns && settings.customAddOns.length > 0 && (
-                <Card className="border-slate-200 shadow-lg">
-                  <CardHeader className="">
-                    <CardTitle className="text-slate-800 flex items-center justify-between">
-                      Additional Services
+                <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
+                    <CardTitle className="text-[#3C2317] flex items-center justify-between text-lg sm:text-xl">
+                      <span>Exclusive Services</span>
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
                         onClick={handleManualRefresh}
                         disabled={loadingSettings}
-                        className="text-blue-600 hover:text-blue-700"
+                        className="text-[#3C2317] hover:text-[#3C2317]/80 hover:bg-[#3C2317]/10 p-1 sm:p-2"
                       >
-                        {loadingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : "Refresh"}
+                        {loadingSettings ? <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" /> : "Refresh"}
                       </Button>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-6 space-y-4">
+                  <CardContent className="p-4 sm:p-6 space-y-2 sm:space-y-3">
                     {settings.customAddOns.map((addon) => (
                       <div
                         key={addon.id}
-                        className="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-50 transition-colors"
+                        className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl hover:bg-[#E6CFA9]/50 transition-all duration-300 border border-transparent hover:border-[#D3B88C]/30"
                       >
                         <Checkbox
                           id={`custom-${addon.id}`}
                           checked={selectedCustomAddOns.includes(addon.id)}
                           onCheckedChange={(checked) => handleCustomAddOnChange(addon.id, checked as boolean)}
-                          className="border-blue-400 data-[state=checked]:bg-blue-500"
+                          className="border-2 border-[#3C2317] data-[state=checked]:bg-[#3C2317] data-[state=checked]:border-[#3C2317] h-4 w-4 sm:h-5 sm:w-5 mt-0.5 sm:mt-1 flex-shrink-0"
                         />
-                        <Label htmlFor={`custom-${addon.id}`} className="flex-1 text-slate-700 cursor-pointer">
-                          <div>
-                            <span>{addon.name}</span>
-                            <span className="text-blue-500 ml-2 font-medium">AED {addon.price}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start mb-1">
+                            <Label
+                              htmlFor={`custom-${addon.id}`}
+                              className="text-[#3C2317] font-medium text-sm sm:text-base cursor-pointer"
+                            >
+                              {addon.name}
+                            </Label>
+                            <span className="text-[#3C2317] font-bold text-sm sm:text-base whitespace-nowrap ml-2 sm:ml-3">
+                              AED {addon.price}
+                            </span>
                           </div>
-                          {addon.description && <div className="text-sm text-slate-500 mt-1">{addon.description}</div>}
-                        </Label>
+                          {addon.description && <p className="text-xs sm:text-sm text-[#3C2317]/80 mt-1">{addon.description}</p>}
+                        </div>
                       </div>
                     ))}
                   </CardContent>
                 </Card>
               )}
 
-              <Card className="border-slate-200 shadow-lg">
-                <CardHeader className="">
-                  <CardTitle className="text-slate-800">Additional Notes</CardTitle>
+              <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
+                  <CardTitle className="text-[#3C2317] text-lg sm:text-xl">Special Requests</CardTitle>
                 </CardHeader>
-                <CardContent className="p-6">
-                  <Label htmlFor="notes" className="text-slate-700 mb-2 block">
-                    Special Requests
+                <CardContent className="p-4 sm:p-6 md:p-8">
+                  <Label htmlFor="notes" className="text-[#3C2317] mb-2 sm:mb-3 block font-medium">
+                    Additional Notes
                   </Label>
                   <Textarea
                     id="notes"
-                    placeholder="Any special requests or dietary requirements..."
+                    placeholder="Any special requests, dietary requirements, or celebration details..."
                     value={formData.notes}
                     onChange={(e) => handleInputChange("notes", e.target.value)}
-                    rows={4}
-                    className="border-slate-200 focus:border-blue-400"
+                    rows={3}
+                    className="border-2 border-[#D3B88C] focus:border-[#3C2317] focus:ring-2 focus:ring-[#3C2317]/20 transition-all duration-300 rounded-xl resize-none text-sm sm:text-base"
                   />
                 </CardContent>
               </Card>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <Card className="border-slate-200 shadow-lg">
-                  <CardHeader className="bg-gradient-to-r from-green-100 to-emerald-100">
-                    <CardTitle className="text-green-800 flex items-center">
-                      <Check className="w-5 h-5 mr-2 py-5" />
-                      What's Included?
+              <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+                <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9] !py-0">
+                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C] h-12 sm:h-14 py-3 sm:py-4">
+                    <CardTitle className="text-[#3C2317] flex items-center text-lg sm:text-xl">
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                      Premium Inclusions
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-6">
-                    <ul className="space-y-2 text-sm text-green-700">
-                      <li>• Tent setup for up to 4 persons</li>
-                      <li>• Bed Blankets & Sleeping pillows</li>
-                      <li>• All bedding and blankets (winter set up)</li>
-                      <li>• Fire pit</li>
-                      <li>• Fire extinguisher on fuel</li>
-                      <li>• Foldable chairs</li>
-                      <li>• Foldable table</li>
-                      <li>• Rugged Plates</li>
-                      <li>• Telephone & Lights</li>
-                      <li>• Gas Burner Stove with Butane Gas</li>
-                      <li>• Cooking pots</li>
-                      <li>• Rugged Plates</li>
-                      <li>• Cutlery</li>
-                      <li>• Cooking utensils</li>
+                  <CardContent className="p-4 sm:p-6 md:p-8">
+                    <ul className="space-y-2 sm:space-y-3 text-[#3C2317] text-sm sm:text-base">
+                      <li className="flex items-start space-x-2 sm:space-x-3">
+                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                        <span>Luxury tent setup for up to 4 persons</span>
+                      </li>
+                      <li className="flex items-start space-x-2 sm:space-x-3">
+                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                        <span>Premium bedding & sleeping pillows</span>
+                      </li>
+                      <li className="flex items-start space-x-2 sm:space-x-3">
+                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                        <span>Winter bedding set & blankets</span>
+                      </li>
+                      <li className="flex items-start space-x-2 sm:space-x-3">
+                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                        <span>Professional fire pit setup</span>
+                      </li>
+                      <li className="flex items-start space-x-2 sm:space-x-3">
+                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                        <span>Safety equipment & fire extinguisher</span>
+                      </li>
+                      <li className="flex items-start space-x-2 sm:space-x-3">
+                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                        <span>Comfortable foldable furniture</span>
+                      </li>
+                      <li className="flex items-start space-x-2 sm:space-x-3">
+                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                        <span>Complete cooking equipment & utensils</span>
+                      </li>
+                      <li className="flex items-start space-x-2 sm:space-x-3">
+                        <Check className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                        <span>Ambient lighting & power solutions</span>
+                      </li>
                     </ul>
                   </CardContent>
                 </Card>
 
-                <Card className="border-slate-200 shadow-lg">
-                  <CardHeader className="bg-gradient-to-r from-red-100 to-pink-100">
-                    <CardTitle className="text-red-800 flex items-center">
-                      <X className="w-5 h-5 mr-2 py-5" />
-                      Exclusions
+                <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl bg-gradient-to-br from-[#FBF9D9] to-[#E6CFA9] !py-0">
+                  <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C] h-12 sm:h-14 py-3 sm:py-4">
+                    <CardTitle className="text-[#3C2317] flex items-center text-lg sm:text-xl">
+                      <X className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                      Not Included
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-6">
-                    <ul className="space-y-2 text-sm text-red-700">
-                      <li>• Water & Food</li>
-                      <li>• Fuel & Charcoal</li>
-                      <li>
-                        • Towel & toiletries (we included, you can have a BBQ & provisions to cook as part of your
-                        social experience)
+                  <CardContent className="p-4 sm:p-6 md:p-8">
+                    <ul className="space-y-2 sm:space-y-3 text-[#3C2317] text-sm sm:text-base">
+                      <li className="flex items-start space-x-2 sm:space-x-3">
+                        <X className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                        <span>Food & beverages (bring your favorites)</span>
                       </li>
-                      <li>• Charged (50 AED)</li>
+                      <li className="flex items-start space-x-2 sm:space-x-3">
+                        <X className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                        <span>Fuel & charcoal (available as add-ons)</span>
+                      </li>
+                      <li className="flex items-start space-x-2 sm:space-x-3">
+                        <X className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                        <span>Personal toiletries & towels</span>
+                      </li>
+                      <li className="flex items-start space-x-2 sm:space-x-3">
+                        <X className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-[#3C2317] flex-shrink-0" />
+                        <span>Transportation to location</span>
+                      </li>
                     </ul>
-                    <p className="text-xs text-red-600 mt-4">
-                      Note: You are welcome to bring your own food and drinks. Firewood & Charcoal with you.
-                    </p>
+                    <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-[#E6CFA9] rounded-xl">
+                      <p className="text-xs sm:text-sm text-[#3C2317] font-medium">
+                        💡 Pro Tip: We welcome you to bring your own food and drinks for a personalized experience!
+                      </p>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
 
-              <Card className="border-slate-200 shadow-lg">
-                <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
-                  <CardTitle className="text-slate-800 py-5">Please note</CardTitle>
+              {/* <Card className="border-[#D3B88C]/50 shadow-lg sm:shadow-xl bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+                <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50 h-12 sm:h-14 py-3 sm:py-4">
+                  <CardTitle className="text-[#3C2317] text-lg sm:text-xl">Important Information</CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 space-y-4 text-slate-700">
-                  <div>
-                    <h4 className="font-semibold mb-2">Location</h4>
-                    <p className="text-sm">
-                      Nomadic camping does not in moving exact locations that can compromise its difficult to get to
-                      without a 4x4 so you will be a day and we will be happy to park your car at our location and we
-                      will take you to the camping location.
-                    </p>
-                  </div>
+                <CardContent className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 text-[#3C2317]">
+                  <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
+                    <div className="space-y-3 sm:space-y-4">
+                      <div>
+                        <h4 className="font-bold mb-2 sm:mb-3 text-[#3C2317] text-sm sm:text-base">📍 Location & Access</h4>
+                        <p className="text-[#3C2317]/80 leading-relaxed text-xs sm:text-sm">
+                          Our premium locations require 4x4 access. We provide secure parking and guided transport to
+                          your camping site for the ultimate adventure experience.
+                        </p>
+                      </div>
 
-                  <div>
-                    <h4 className="font-semibold mb-2">Meeting Point</h4>
-                    <p className="text-sm">
-                      Once you're booked, you'll be sent camping exact times meeting point via email. This is where
-                      you'll meet your camping guide before they guide you to your camping setup.
-                    </p>
-                  </div>
+                      <div>
+                        <h4 className="font-bold mb-2 sm:mb-3 text-[#3C2317] text-sm sm:text-base">🎯 Meeting Point</h4>
+                        <p className="text-[#3C2317]/80 leading-relaxed text-xs sm:text-sm">
+                          Detailed meeting point and timing will be sent via email after booking confirmation. Our
+                          professional guides will escort you to your luxury setup.
+                        </p>
+                      </div>
+                    </div>
 
-                  <div>
-                    <h4 className="font-semibold mb-2">Clothing</h4>
-                    <p className="text-sm">
-                      Please ensure you bring warm pajamas for the evening time when you are outside as it can get quite
-                      cold in the evening. Comfortable footwear is also recommended.
-                    </p>
-                  </div>
+                    <div className="space-y-3 sm:space-y-4">
+                      <div>
+                        <h4 className="font-bold mb-2 sm:mb-3 text-[#3C2317] text-sm sm:text-base">👕 What to Bring</h4>
+                        <p className="text-[#3C2317]/80 leading-relaxed text-xs sm:text-sm">
+                          Warm clothing for evening temperatures, comfortable footwear, and personal items. Desert
+                          nights can be surprisingly cool!
+                        </p>
+                      </div>
 
-                  <div>
-                    <h4 className="font-semibold mb-2">Pets</h4>
-                    <p className="text-sm">
-                      Pets are welcome as long as you provide food for them and they do not disturb the camping
-                      experience.
-                    </p>
+                      <div>
+                        <h4 className="font-bold mb-2 sm:mb-3 text-[#3C2317] text-sm sm:text-base">🐕 Pet Policy</h4>
+                        <p className="text-[#3C2317]/80 leading-relaxed text-xs sm:text-sm">
+                          Well-behaved pets are welcome! Please bring their food and ensure they won't disturb the
+                          peaceful camping atmosphere.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
             </form>
           </div>
 
           <div className="lg:col-span-1">
-            <Card className="sticky top-6 border-slate-200 shadow-xl">
-              <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-4">
-                <CardTitle>Booking Summary</CardTitle>
+            <Card className="sticky top-20 sm:top-24 border-[#D3B88C]/50 shadow-xl sm:shadow-2xl bg-[#FBF9D9]/90 backdrop-blur-md overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-[#3C2317] to-[#5D4037] text-[#FBF9D9] p-4 sm:p-6 md:p-8">
+                <CardTitle className="text-xl sm:text-2xl font-bold">Booking Summary</CardTitle>
+                <p className="text-[#FBF9D9]/90 text-sm sm:text-base">Your luxury camping experience</p>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-700">
+              <CardContent className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex justify-between items-center p-3 sm:p-4 bg-[#E6CFA9]/30 rounded-xl">
+                    <span className="text-[#3C2317] font-medium text-sm sm:text-base">
                       {formData.numberOfTents} Tent{formData.numberOfTents > 1 ? "s" : ""} ({formData.location})
                     </span>
-                    <span className="font-medium text-slate-800">AED {pricing.tentPrice.toFixed(2)}</span>
+                    <span className="font-bold text-[#3C2317] text-sm sm:text-base">AED {pricing.tentPrice.toFixed(2)}</span>
                   </div>
 
+                  {formData.location === "Wadi" && formData.numberOfTents < 2 && (
+                    <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-amber-100 rounded-full flex items-center justify-center">
+                          <span className="text-amber-600 text-xs sm:text-sm font-bold">!</span>
+                        </div>
+                        <div>
+                          <p className="text-amber-800 font-medium text-xs sm:text-sm">Wadi Location Requirement</p>
+                          <p className="text-amber-700 text-xs">
+                            Minimum 2 tents required for Wadi bookings due to logistics
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {formData.location === "Wadi" && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Wadi Surcharge</span>
-                      <span className="text-slate-700">AED {pricing.locationSurcharge.toFixed(2)}</span>
+                    <div className="flex justify-between text-xs sm:text-sm p-2 sm:p-3 bg-[#E6CFA9]/20 rounded-lg">
+                      <span className="text-[#3C2317]/80">Wadi Premium Surcharge</span>
+                      <span className="text-[#3C2317] font-medium">AED {pricing.locationSurcharge.toFixed(2)}</span>
                     </div>
                   )}
 
                   {pricing.addOnsCost > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Standard Add-ons</span>
-                      <span className="text-slate-700">AED {pricing.addOnsCost.toFixed(2)}</span>
+                    <div className="flex justify-between text-xs sm:text-sm p-2 sm:p-3 bg-[#E6CFA9]/20 rounded-lg">
+                      <span className="text-[#3C2317]/80">Premium Add-ons</span>
+                      <span className="text-[#3C2317] font-medium">AED {pricing.addOnsCost.toFixed(2)}</span>
                     </div>
                   )}
 
                   {pricing.customAddOnsCost > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Additional Services</span>
-                      <span className="text-slate-700">AED {pricing.customAddOnsCost.toFixed(2)}</span>
+                    <div className="flex justify-between text-xs sm:text-sm p-2 sm:p-3 bg-[#E6CFA9]/20 rounded-lg">
+                      <span className="text-[#3C2317]/80">Exclusive Services</span>
+                      <span className="text-[#3C2317] font-medium">AED {pricing.customAddOnsCost.toFixed(2)}</span>
                     </div>
                   )}
 
-                  <div className="border-t border-slate-200 pt-3">
+                  <div className="border-t border-[#D3B88C] pt-3 sm:pt-4 space-y-2 sm:space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-slate-700">Subtotal</span>
-                      <span className="text-slate-800">AED {pricing.subtotal.toFixed(2)}</span>
+                      <span className="text-[#3C2317] font-medium text-sm sm:text-base">Subtotal</span>
+                      <span className="text-[#3C2317] font-bold text-sm sm:text-base">AED {pricing.subtotal.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between text-sm text-slate-500">
-                      <span>VAT ({((settings?.vatRate || 0.05) * 100).toFixed(0)}%)</span>
-                      <span className="text-slate-700">AED {pricing.vat.toFixed(2)}</span>
+                    <div className="flex justify-between text-xs sm:text-sm">
+                      <span className="text-[#3C2317]/80">VAT ({((settings?.vatRate || 0.05) * 100).toFixed(0)}%)</span>
+                      <span className="text-[#3C2317] font-medium">AED {pricing.vat.toFixed(2)}</span>
                     </div>
                   </div>
 
-                  <div className="border-t border-slate-300 pt-3">
-                    <div className="flex justify-between text-xl font-bold">
-                      <span className="text-slate-800">Total</span>
-                      <span className="text-slate-800">AED {pricing.total.toFixed(2)}</span>
+                  <div className="border-t-2 border-[#3C2317]/20 pt-3 sm:pt-4">
+                    <div className="flex justify-between text-lg sm:text-xl md:text-2xl font-bold p-3 sm:p-4 bg-gradient-to-r from-[#3C2317]/10 to-[#5D4037]/10 rounded-xl">
+                      <span className="text-[#3C2317]">Total</span>
+                      <span className="text-[#3C2317]">AED {pricing.total.toFixed(2)}</span>
                     </div>
                   </div>
 
                   <Button
-                    type="submit"
                     onClick={handleSubmit}
-                    className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-medium py-3"
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-[#3C2317] to-[#5D4037] hover:from-[#3C2317]/90 hover:to-[#5D4037]/90 text-[#FBF9D9] font-bold py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
                     size="lg"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Processing..." : "Reserve Now"}
+                    {isLoading ? (
+                      <div className="flex items-center space-x-3">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Processing...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-3">
+                        <Shield className="w-5 h-5" />
+                        <span>Reserve Your Adventure</span>
+                      </div>
+                    )}
                   </Button>
                 </div>
 
-                <p className="text-xs text-slate-500 text-center">
-                  Secure payment powered by Stripe. You will be redirected to complete your payment.
-                </p>
+                <div className="text-center">
+                  <p className="text-xs text-[#3C2317]/80 mb-4">
+                    🔒 Secure payment powered by Stripe. You will be redirected to complete your payment safely.
+                  </p>
+                </div>
 
-                <div className="bg-slate-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-slate-800 mb-2">Pricing Information</h4>
-                  <ul className="text-xs text-slate-600 space-y-1">
-                    <li>• Single tent: AED {settings?.tentPrices?.singleTent || 1497} + VAT</li>
-                    <li>• Multiple tents: AED {settings?.tentPrices?.multipleTents || 1297} each + VAT</li>
-                    <li>• Wadi surcharge: AED {settings?.wadiSurcharge || 250}</li>
-                    <li>• Portable toilet FREE with children</li>
+                <div className="bg-gradient-to-r from-[#E6CFA9]/50 to-[#D3B88C]/20 p-6 rounded-xl border border-[#3C2317]/10">
+                  <h4 className="font-bold text-[#3C2317] mb-4 text-lg">💰 Pricing Guide</h4>
+                  <ul className="text-sm text-[#3C2317]/80 space-y-2">
+                    <li className="flex justify-between">
+                      <span>Single tent:</span>
+                      <span className="font-medium">AED {settings?.tentPrices?.singleTent || 1497} + VAT</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span>Multiple tents:</span>
+                      <span className="font-medium">AED {settings?.tentPrices?.multipleTents || 1297} each + VAT</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span>Wadi surcharge:</span>
+                      <span className="font-medium">AED {settings?.wadiSurcharge || 250}</span>
+                    </li>
+                    <li className="flex justify-between text-[#3C2317]">
+                      <span>Children bonus:</span>
+                      <span className="font-medium">FREE portable toilet</span>
+                    </li>
                   </ul>
                 </div>
               </CardContent>

@@ -4,10 +4,10 @@
 import type React from "react"
 import { useSession, signOut } from "next-auth/react"
 import { useRouter, usePathname } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { LogOut, LayoutDashboard, ShoppingCart, Settings, Tent } from "lucide-react"
+import { LogOut, LayoutDashboard, ShoppingCart, Settings, Tent, Menu, X, MapPin } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
@@ -15,6 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { data: session, status } = useSession()
   const router = useRouter()
   const pathname = usePathname()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const isLoginPage = pathname === "/admin/login"
 
@@ -39,10 +40,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading...</p>
+      <div className="min-h-screen bg-gradient-to-br from-[#FBF9D9] via-[#E6CFA9] to-[#D3B88C] flex items-center justify-center">
+        <div className="text-center animate-fade-in-up">
+          <div className="relative">
+            <div className="w-12 h-12 border-4 border-[#3C2317]/20 rounded-full animate-spin mx-auto mb-6">
+              <div className="absolute inset-0 w-12 h-12 border-4 border-t-[#3C2317] rounded-full animate-spin"></div>
+            </div>
+          </div>
+          <p className="text-[#3C2317] text-base font-medium">Loading admin dashboard...</p>
         </div>
       </div>
     )
@@ -50,11 +55,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!session || session.user?.role !== "admin") {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center text-red-600 bg-white p-8 rounded-lg shadow-lg">
-          <p className="text-lg font-medium mb-4">Access denied</p>
-          <p className="text-slate-600 mb-6">Please login as Admin to continue</p>
-          <Button asChild>
+      <div className="min-h-screen bg-gradient-to-br from-[#FBF9D9] via-[#E6CFA9] to-[#D3B88C] flex items-center justify-center">
+        <div className="text-center bg-[#FBF9D9]/95 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border border-[#D3B88C]/50">
+          <div className="w-16 h-16 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-full flex items-center justify-center mx-auto mb-6">
+            <Tent className="w-8 h-8 text-[#FBF9D9]" />
+          </div>
+          <p className="text-base font-medium mb-4 text-[#3C2317]">Access Denied</p>
+          <p className="text-[#3C2317]/80 mb-6">Please login as Admin to continue</p>
+          <Button
+            asChild
+            className="bg-gradient-to-r from-[#3C2317] to-[#5D4037] hover:from-[#3C2317]/90 hover:to-[#5D4037]/90 text-[#FBF9D9]"
+          >
             <Link href="/admin/login">Go to Login</Link>
           </Button>
         </div>
@@ -84,65 +95,56 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   ]
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card border-b border-border shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-8">
-              <Link href="/admin/dashboard" className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                  <Tent className="w-5 h-5 text-primary-foreground" />
+    <div className="min-h-screen bg-gradient-to-br from-[#FBF9D9] via-[#E6CFA9] to-[#D3B88C]">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-[#3C2317]/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={cn(
+          "fixed left-0 top-0 h-full w-80 bg-[#FBF9D9]/95 backdrop-blur-md border-r border-[#D3B88C]/50 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+        )}
+      >
+        <div className="flex flex-col h-full">
+          {/* Sidebar Header */}
+          <div className="p-6 border-b border-[#D3B88C]/50">
+            <div className="flex items-center justify-between">
+              <Link href="/admin/dashboard" className="flex items-center space-x-3 group">
+                <div className="relative">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                    <MapPin className="w-6 h-6 text-[#FBF9D9]" />
+                  </div>
+                  <div className="absolute -inset-1 bg-gradient-to-br from-[#3C2317]/20 to-[#5D4037]/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-2xl font-bold text-foreground">NOMADIC</span>
-                  <Badge variant="outline" className="border-primary/20 text-primary bg-primary/10">
-                    Admin
-                  </Badge>
+                <div>
+                  <span className="text-xl font-bold tracking-wide text-[#3C2317]">NOMADIC</span>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <Badge variant="outline" className="border-[#D3B88C] text-[#3C2317] bg-[#D3B88C]/20 text-xs">
+                      Admin Panel
+                    </Badge>
+                  </div>
                 </div>
               </Link>
 
-              <nav className="hidden md:flex items-center space-x-1">
-                {navigationItems.map((item) => {
-                  const Icon = item.icon
-                  const isActive = pathname === item.href
-
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        "flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-                        isActive
-                          ? "bg-primary/10 text-primary border border-primary/20"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                      )}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span>{item.label}</span>
-                    </Link>
-                  )
-                })}
-              </nav>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <div className="hidden sm:block text-right">
-                <div className="text-sm font-medium text-foreground">{session?.user?.username}</div>
-                <div className="text-xs text-muted-foreground">Administrator</div>
-              </div>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                onClick={() => signOut({ callbackUrl: "/admin/login" })}
-                className="border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                onClick={() => setSidebarOpen(false)}
+                className="lg:hidden text-[#3C2317] hover:bg-[#3C2317]/10"
               >
-                <LogOut className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Logout</span>
+                <X className="w-5 h-5" />
               </Button>
             </div>
           </div>
 
-          <nav className="md:hidden mt-4 flex space-x-1 overflow-x-auto">
+          {/* Navigation Items */}
+          <nav className="flex-1 p-6 space-y-2">
             {navigationItems.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
@@ -151,23 +153,84 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={() => setSidebarOpen(false)}
                   className={cn(
-                    "flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors",
+                    "flex items-center space-x-4 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group",
                     isActive
-                      ? "bg-primary/10 text-primary border border-primary/20"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      ? "bg-gradient-to-r from-[#3C2317] to-[#5D4037] text-[#FBF9D9] shadow-lg"
+                      : "text-[#3C2317] hover:bg-[#D3B88C]/30 hover:shadow-md",
                   )}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.label}</span>
+                  <div
+                    className={cn(
+                      "w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300",
+                      isActive ? "bg-[#FBF9D9]/20" : "bg-[#D3B88C]/20 group-hover:bg-[#D3B88C]/40",
+                    )}
+                  >
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-semibold">{item.label}</div>
+                    <div className={cn("text-xs opacity-80", isActive ? "text-[#FBF9D9]/80" : "text-[#3C2317]/60")}>
+                      {item.description}
+                    </div>
+                  </div>
                 </Link>
               )
             })}
           </nav>
-        </div>
-      </header>
 
-      <main>{children}</main>
+          {/* User Info & Logout */}
+          <div className="p-6 border-t border-[#D3B88C]/50">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#D3B88C] to-[#E6CFA9] rounded-full flex items-center justify-center">
+                <span className="text-[#3C2317] font-bold text-sm">
+                  {session?.user?.username?.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div className="flex-1">
+                <div className="text-sm font-medium text-[#3C2317]">{session?.user?.username}</div>
+                <div className="text-xs text-[#3C2317]/60">Administrator</div>
+              </div>
+            </div>
+
+            <Button
+              onClick={() => signOut({ callbackUrl: "/admin/login" })}
+              className="w-full bg-gradient-to-r from-[#3C2317]/10 to-[#5D4037]/10 hover:from-[#3C2317]/20 hover:to-[#5D4037]/20 text-[#3C2317] border border-[#D3B88C]/50 hover:border-[#3C2317]/30"
+              variant="outline"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="lg:ml-80">
+        {/* Mobile Header */}
+        <div className="lg:hidden bg-[#FBF9D9]/95 backdrop-blur-md border-b border-[#D3B88C]/50 p-4">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarOpen(true)}
+              className="text-[#3C2317] hover:bg-[#3C2317]/10"
+            >
+              <Menu className="w-5 h-5" />
+            </Button>
+
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-full flex items-center justify-center">
+                <MapPin className="w-4 h-4 text-[#FBF9D9]" />
+              </div>
+              <span className="text-base font-bold text-[#3C2317]">NOMADIC</span>
+            </div>
+          </div>
+        </div>
+
+        <main className="min-h-screen">{children}</main>
+      </div>
     </div>
   )
 }

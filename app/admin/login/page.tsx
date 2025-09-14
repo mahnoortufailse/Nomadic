@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { MapPin, Eye, EyeOff, AlertCircle } from "lucide-react"
+import { MapPin, Eye, EyeOff, AlertCircle, Shield } from "lucide-react"
 import Link from "next/link"
 
 export default function AdminLoginPage() {
@@ -47,32 +47,32 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#FBF9D9] via-[#E6CFA9] to-[#D3B88C] flex items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-600/20 via-slate-600/10 to-indigo-600/20"></div>
-        <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-blue-600/10 to-transparent"></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[#3C2317]/20 via-[#5D4037]/10 to-[#3C2317]/20"></div>
+        <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-[#3C2317]/10 to-transparent"></div>
       </div>
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center shadow-lg">
-              <MapPin className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-full flex items-center justify-center shadow-lg">
+              <MapPin className="w-6 h-6 text-[#FBF9D9]" />
             </div>
-            <span className="text-4xl font-bold text-slate-900 tracking-wide">NOMADIC</span>
+            <span className="text-4xl font-bold text-[#3C2317] tracking-wide">NOMADIC</span>
           </Link>
-          <p className="text-slate-700 mt-3 font-medium text-lg">Admin Dashboard</p>
+          <p className="text-[#3C2317] mt-3 font-medium text-lg">Admin Dashboard</p>
         </div>
 
-        <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+        <Card className="shadow-2xl border-0 bg-[#FBF9D9]/95 backdrop-blur-sm border-[#D3B88C]/50">
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl font-bold text-slate-900">Welcome Back</CardTitle>
-            <p className="text-slate-600 mt-2">Sign in to access your dashboard</p>
+            <CardTitle className="text-2xl font-bold text-[#3C2317]">Welcome Back</CardTitle>
+            <p className="text-[#3C2317]/80 mt-2">Sign in to access your dashboard</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="username" className="text-slate-900 font-medium">
+                <Label htmlFor="username" className="text-[#3C2317] font-medium">
                   Username
                 </Label>
                 <Input
@@ -83,12 +83,12 @@ export default function AdminLoginPage() {
                   required
                   disabled={isLoading}
                   placeholder="Enter your username"
-                  className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                  className="border-[#D3B88C] focus:border-[#3C2317] focus:ring-[#3C2317]/20"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-slate-900 font-medium">
+                <Label htmlFor="password" className="text-[#3C2317] font-medium">
                   Password
                 </Label>
                 <div className="relative">
@@ -100,13 +100,13 @@ export default function AdminLoginPage() {
                     required
                     disabled={isLoading}
                     placeholder="Enter your password"
-                    className="pr-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="pr-12 border-[#D3B88C] focus:border-[#3C2317] focus:ring-[#3C2317]/20"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 text-slate-600 hover:text-slate-800"
+                    className="absolute right-0 top-0 h-full px-3 py-2 text-[#3C2317] hover:text-[#3C2317] hover:bg-[#3C2317]/10"
                     onClick={() => setShowPassword(!showPassword)}
                     disabled={isLoading}
                   >
@@ -126,18 +126,27 @@ export default function AdminLoginPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white"
+                className="w-full bg-gradient-to-r from-[#3C2317] to-[#5D4037] hover:from-[#3C2317]/90 hover:to-[#5D4037]/90 text-[#FBF9D9] font-medium cursor-pointer"
                 disabled={isLoading}
               >
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-[#FBF9D9]/30 border-t-[#FBF9D9] rounded-full animate-spin"></div>
+                    <span>Signing in...</span>
+                  </div>
+                ) : (
+                  "Sign In"
+                )}
               </Button>
             </form>
 
-            {/* ✅ Fixed credentials hint */}
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm font-medium text-blue-900 mb-2">Default Admin Credentials:</p>
-              <p className="text-xs text-blue-700">Username: admin</p>
-              <p className="text-xs text-blue-700">Password: Admin@123</p>
+            <div className="mt-6 p-4 bg-[#E6CFA9] border border-[#D3B88C] rounded-lg">
+              <div className="flex items-center mb-2">
+                <Shield className="h-4 w-4 text-[#3C2317] mr-2" />
+                <p className="text-sm font-medium text-[#3C2317]">Default Admin Credentials:</p>
+              </div>
+              <p className="text-xs text-[#3C2317]">Username: admin</p>
+              <p className="text-xs text-[#3C2317]">Password: Admin@123</p>
             </div>
           </CardContent>
         </Card>
