@@ -85,9 +85,6 @@ export default function BookingSuccessPage() {
       <div className="max-w-4xl mx-auto p-6">
         {/* Success Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-green-600" />
-          </div>
           <div className="w-full flex justify-center">
             <div className="w-96 ">
               {" "}
