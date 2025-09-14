@@ -568,15 +568,15 @@ export default function BookingPage() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-2 group">
               <div className="relative">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-[#FBF9D9]" />
-                </div>
-                <div className="absolute -inset-1 bg-gradient-to-br from-[#3C2317]/20 to-[#5D4037]/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <Image
+                  src="/logo.png"
+                  alt="NOMADIC"
+                  width={120}
+                  height={40}
+                  className="h-8 sm:h-10 w-auto group-hover:scale-105 transition-all duration-300"
+                />
               </div>
-              <div>
-                <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-wide text-white">NOMADIC</span>
-                <p className="text-xs text-white/80">Premium Desert Experiences</p>
-              </div>
+              
             </Link>
             <div className="flex items-center space-x-1">
               <div className="flex items-center space-x-0.5 text-[#D3B88C]">
@@ -599,6 +599,7 @@ export default function BookingPage() {
                   src={
                     campingImages[currentImageIndex].src ||
                     "/placeholder.svg?height=400&width=800&query=luxury desert camping" ||
+                    "/placeholder.svg" ||
                     "/placeholder.svg"
                   }
                   alt={campingImages[currentImageIndex].alt}

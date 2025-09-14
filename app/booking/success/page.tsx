@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, MapPin, Calendar, Users, Mail } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import type { Booking } from "@/lib/types"
 
 export default function BookingSuccessPage() {
@@ -66,10 +67,7 @@ export default function BookingSuccessPage() {
       <nav className="border-b bg-card p-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-              <MapPin className="w-4 h-4 text-primary-foreground" />
-            </div>
-            <span className="text-2xl font-bold">NOMADIC</span>
+            <Image src="/logo.png" alt="NOMADIC" width={140} height={45} className="h-10 w-auto" />
           </Link>
         </div>
       </nav>
@@ -82,7 +80,7 @@ export default function BookingSuccessPage() {
           </div>
           <h1 className="text-4xl font-bold mb-4">Booking Confirmed!</h1>
           <p className="text-xl text-muted-foreground">
-            Thank you for choosing Nomadic. Your desert adventure is booked and confirmed.
+            Thank you for choosing NOMADIC. Your desert adventure is booked and confirmed.
           </p>
         </div>
 

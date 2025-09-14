@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { MapPin, Eye, EyeOff, AlertCircle, Shield } from "lucide-react"
+import { Eye, EyeOff, AlertCircle, Shield } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function AdminLoginPage() {
   const [username, setUsername] = useState("")
@@ -56,10 +57,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-full flex items-center justify-center shadow-lg">
-              <MapPin className="w-6 h-6 text-[#FBF9D9]" />
-            </div>
-            <span className="text-4xl font-bold text-[#3C2317] tracking-wide">NOMADIC</span>
+            <Image src="/logo.png" alt="NOMADIC" width={200} height={65} className="h-12 w-auto" />
           </Link>
           <p className="text-[#3C2317] mt-3 font-medium text-lg">Admin Dashboard</p>
         </div>
