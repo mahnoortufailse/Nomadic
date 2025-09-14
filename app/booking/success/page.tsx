@@ -71,7 +71,13 @@ export default function BookingSuccessPage() {
       <nav className="border-b bg-card p-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <Image src="/logo.png" alt="NOMADIC" width={140} height={45} className="h-10 w-auto" />
+            <Image
+              src="/logo.png"
+              alt="NOMADIC"
+              width={140}
+              height={45}
+              className="h-10 w-auto"
+            />
           </Link>
         </div>
       </nav>
@@ -82,7 +88,14 @@ export default function BookingSuccessPage() {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
-          <DotLottieReact src="/tent.lottie" loop autoplay />
+          <div className="w-full flex justify-center">
+            <div className="w-96 ">
+              {" "}
+              {/* controls the size */}
+              <DotLottieReact src="/tent.lottie" loop autoplay />
+            </div>
+          </div>
+
           <p className="text-xl text-muted-foreground">
             Thank you for choosing Nomadic. Your desert adventure is booked and
             confirmed.
