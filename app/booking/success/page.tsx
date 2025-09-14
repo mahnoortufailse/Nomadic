@@ -5,7 +5,15 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, MapPin, Calendar, Users, Mail, Star, Shield } from "lucide-react";
+import {
+  CheckCircle,
+  MapPin,
+  Calendar,
+  Users,
+  Mail,
+  Star,
+  Shield,
+} from "lucide-react";
 import Link from "next/link";
 import type { Booking } from "@/lib/types";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
@@ -58,7 +66,10 @@ export default function BookingSuccessPage() {
             <p className="text-[#3C2317] mb-4">
               Unable to load booking details
             </p>
-            <Button asChild className="bg-gradient-to-r from-[#3C2317] to-[#5D4037] hover:from-[#3C2317]/90 hover:to-[#5D4037]/90 text-[#FBF9D9]">
+            <Button
+              asChild
+              className="bg-gradient-to-r from-[#3C2317] to-[#5D4037] hover:from-[#3C2317]/90 hover:to-[#5D4037]/90 text-[#FBF9D9]"
+            >
               <Link href="/">Return Home</Link>
             </Button>
           </CardContent>
@@ -68,22 +79,19 @@ export default function BookingSuccessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FBF9D9] via-[#E6CFA9] to-[#D3B88C]">
+    <div className="min-h-screen bg-white">
       {/* Navigation */}
       <nav className="bg-[#3C2317]/90 backdrop-blur-md border-b border-[#3C2317]/50 shadow-lg sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-4 group">
-              <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#3C2317] to-[#5D4037] rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                  <MapPin className="w-6 h-6 text-[#FBF9D9]" />
-                </div>
-                <div className="absolute -inset-1 bg-gradient-to-br from-[#3C2317]/20 to-[#5D4037]/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
-              <div>
-                <span className="text-3xl font-bold tracking-wide text-white">NOMADIC</span>
-                <p className="text-sm text-white/80">Premium Desert Experiences</p>
-              </div>
+              <Image
+                src="/logo.png"
+                alt="NOMADIC"
+                width={140}
+                height={45}
+                className="h-10 w-auto"
+              />
             </Link>
             <div className="flex items-center space-x-2">
               <div className="flex items-center space-x-1 text-[#D3B88C]">
@@ -116,9 +124,11 @@ export default function BookingSuccessPage() {
 
         {/* Booking Details */}
         <div className="grid md:grid-cols-2 gap-6">
-          <Card className="border-[#D3B88C]/50 shadow-xl bg-[#FBF9D9]/80 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50">
-              <CardTitle className="text-[#3C2317] text-xl">Booking Details</CardTitle>
+          <Card className="border-[#D3B88C]/50 shadow-xl bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+            <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50  h-12 py-3">
+              <CardTitle className="text-[#3C2317] text-xl">
+                Booking Details
+              </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center space-x-3">
@@ -180,14 +190,18 @@ export default function BookingSuccessPage() {
           </Card>
 
           <Card className="border-[#D3B88C]/50 shadow-xl bg-[#FBF9D9]/80 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50">
-              <CardTitle className="text-[#3C2317] text-xl">Payment Summary</CardTitle>
+            <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50  h-12 py-3">
+              <CardTitle className="text-[#3C2317] text-xl">
+                Payment Summary
+              </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-[#3C2317]">Subtotal</span>
-                  <span className="text-[#3C2317]">AED {booking.subtotal.toFixed(2)}</span>
+                  <span className="text-[#3C2317]">
+                    AED {booking.subtotal.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm text-[#3C2317]/80">
                   <span>VAT (5%)</span>
@@ -214,9 +228,11 @@ export default function BookingSuccessPage() {
         </div>
 
         {/* Next Steps */}
-        <Card className="mt-8 border-[#D3B88C]/50 shadow-xl bg-[#FBF9D9]/80 backdrop-blur-sm">
-          <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50">
-            <CardTitle className="text-[#3C2317] text-xl">What Happens Next?</CardTitle>
+        <Card className="mt-8 border-[#D3B88C]/50 shadow-xl bg-[#FBF9D9]/80 backdrop-blur-sm !py-0">
+          <CardHeader className="bg-gradient-to-r from-[#D3B88C]/20 to-[#E6CFA9]/20 border-b border-[#D3B88C]/50  h-12 py-3">
+            <CardTitle className="text-[#3C2317] text-xl">
+              What Happens Next?
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-4">
             <div className="flex items-start space-x-3">
@@ -225,7 +241,8 @@ export default function BookingSuccessPage() {
                 <p className="font-medium text-[#3C2317]">Confirmation Email</p>
                 <p className="text-[#3C2317]/80">
                   You'll receive a detailed confirmation email at{" "}
-                  <span className="font-medium">{booking.customerEmail}</span> within the next few minutes.
+                  <span className="font-medium">{booking.customerEmail}</span>{" "}
+                  within the next few minutes.
                 </p>
               </div>
             </div>
@@ -256,10 +273,19 @@ export default function BookingSuccessPage() {
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-          <Button asChild size="lg" className="bg-gradient-to-r from-[#3C2317] to-[#5D4037] hover:from-[#3C2317]/90 hover:to-[#5D4037]/90 text-[#FBF9D9] font-bold py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <Button
+            asChild
+            size="lg"
+            className="bg-gradient-to-r from-[#3C2317] to-[#5D4037] hover:from-[#3C2317]/90 hover:to-[#5D4037]/90 text-[#FBF9D9] font-bold py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+          >
             <Link href="/">Return Home</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#3C2317]/5 text-[#3C2317] transition-all duration-300">
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="border-2 border-[#D3B88C] hover:border-[#3C2317] hover:bg-[#3C2317]/5 text-[#3C2317] transition-all duration-300"
+          >
             <Link href="/">Book Another Trip</Link>
           </Button>
         </div>
