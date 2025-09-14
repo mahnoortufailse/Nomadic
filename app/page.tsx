@@ -890,7 +890,7 @@ export default function BookingPage() {
                           value="Desert"
                           disabled={dateConstraints.lockedLocation && dateConstraints.lockedLocation !== "Desert"}
                         >
-                          🏜️ Desert - Classic dune experience
+                          🏜️ Desert
                           {dateConstraints.lockedLocation && dateConstraints.lockedLocation !== "Desert" && (
                             <span className="text-xs text-gray-500 ml-2">(Not available for this date)</span>
                           )}
@@ -899,7 +899,7 @@ export default function BookingPage() {
                           value="Mountain"
                           disabled={dateConstraints.lockedLocation && dateConstraints.lockedLocation !== "Mountain"}
                         >
-                          ⛰️ Mountain - Elevated adventure
+                          ⛰️ Mountain
                           {dateConstraints.lockedLocation && dateConstraints.lockedLocation !== "Mountain" && (
                             <span className="text-xs text-gray-500 ml-2">(Not available for this date)</span>
                           )}
@@ -908,7 +908,7 @@ export default function BookingPage() {
                           value="Wadi"
                           disabled={dateConstraints.lockedLocation && dateConstraints.lockedLocation !== "Wadi"}
                         >
-                          🌊 Wadi - Oasis experience
+                          🌊 Wadi
                           <span className="text-xs text-amber-600 ml-2">(min. 2 tents required)</span>
                           {dateConstraints.lockedLocation && dateConstraints.lockedLocation !== "Wadi" && (
                             <span className="text-xs text-gray-500 ml-2">(Not available for this date)</span>
