@@ -20,7 +20,6 @@
 //   });
 // }
 import nodemailer from "nodemailer";
-
 // Configure transporter
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST, // e.g. "smtp.gmail.com"
